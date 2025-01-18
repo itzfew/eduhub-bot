@@ -1,7 +1,5 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
-import { Markup } from 'telegraf';
-import { Telegram } from 'telegraf/typings/core/types/typegram';
 
 const debug = createDebug('bot:pdf');
 
@@ -34,16 +32,19 @@ const sendFile = (channelId: string, keyword: string) => async (ctx: Context) =>
   }
 };
 
-// Main function for handling commands
-const handlePdfRequest = () => async (ctx: Context) => {
+// Main function for handling PDF request
+const pdf = () => async (ctx: Context) => {
   const userMessage = ctx.message?.text?.toLowerCase();
 
   if (userMessage) {
     if (userMessage.includes('neet')) {
       // Trigger the sendFile function with the 'neet' keyword
       await sendFile('@neetpw01', 'neet')(ctx);
+    } else if (userMessage.includes('jee')) {
+      // Trigger the sendFile function with the 'jee' keyword
+      await sendFile('@neetpw01', 'jee')(ctx);
     } else {
-      await ctx.reply('Please provide a valid keyword to search for files (e.g., "neet").');
+      await ctx.reply('Please provide a valid keyword to search for files (e.g., "neet", "jee").');
     }
   } else {
     await ctx.reply('Please send a text message with the keyword to search for files.');
