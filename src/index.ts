@@ -12,6 +12,7 @@ import { list } from './commands/list';
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
 import { calculator } from './text/calculator'; // Importing calculator.ts
+import { pdf } from './text/pdf'; // Importing pdf.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -30,7 +31,7 @@ bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
 
-// Message handling (including greeting, calculator, and pyq handlers)
+// Message handling (including greeting, calculator, pyq, and pdf handlers)
 bot.on('message', async (ctx) => {
   // Call the greeting handler
   await greeting()(ctx);
@@ -40,6 +41,9 @@ bot.on('message', async (ctx) => {
 
   // Call the calculator handler
   await calculator()(ctx); // Added calculator handler
+
+  // Call the pdf handler
+  await pdf()(ctx); // Added pdf handler
 });
 
 // Production mode (Vercel)
