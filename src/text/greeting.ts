@@ -26,9 +26,8 @@ const greeting = () => async (ctx: Context) => {
         await ctx.reply(`You're welcome, ${userName}! Let me know if you need further assistance.`);
       } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
         await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
-      } else {
-        await ctx.reply(`I don't understand. Please check the command /list for available options.`);
       }
+      // Removed the "I don't understand" response
     } else {
       // Handle non-text messages (e.g., media)
       await ctx.reply(`I can only respond to text messages. Please send a text command.`);
