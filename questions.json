@@ -14,6 +14,21 @@
       "question": "What is the genetic material in all living organisms?",
       "options": ["DNA", "RNA", "Proteins", "Carbohydrates"],
       "correctAnswer": 0
+    },
+    {
+      "question": "How many times does decarboxylation occur during each TCA cycle?",
+      "options": ["Thrice", "Many", "Once", "Twice"],
+      "correctAnswer": 3
+    },
+    {
+      "question": "The dissolution of synaptonemal complex occurs during:",
+      "options": ["Pachytene", "Diplotene", "Diakinesis", "Leptotene"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "Doubling of the number of chromosomes can be achieved by disrupting mitotic cell division soon after:",
+      "options": ["Anaphase", "Telophase", "Prophase"],
+      "correctAnswer": 0
     }
   ],
   "physics": [
