@@ -1,23 +1,11 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
+import fs from 'fs';
 
 const debug = createDebug('bot:poll');
 
-// Sample random biology quizzes
-const biologyQuizzes = [
-  { question: "What is the powerhouse of the cell?", options: ["Mitochondria", "Nucleus", "Chloroplast", "Endoplasmic Reticulum"], correctAnswer: 0 },
-  { question: "Which vitamin is produced when the skin is exposed to sunlight?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], correctAnswer: 3 },
-  { question: "What is the genetic material in all living organisms?", options: ["DNA", "RNA", "Proteins", "Carbohydrates"], correctAnswer: 0 },
-  // Add more biology-related questions here...
-];
-
-// Sample random physics quizzes
-const physicsQuizzes = [
-  { question: "What is the unit of force?", options: ["Newton", "Joule", "Watt", "Pascal"], correctAnswer: 0 },
-  { question: "What is the speed of light?", options: ["3 × 10^8 m/s", "2 × 10^8 m/s", "1 × 10^8 m/s", "5 × 10^8 m/s"], correctAnswer: 0 },
-  { question: "Who developed the theory of relativity?", options: ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Nikola Tesla"], correctAnswer: 1 },
-  // Add more physics-related questions here...
-];
+// Read the questions from the JSON file
+const questionsData = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
 
 // Main poll function
 const poll = () => async (ctx: Context) => {
@@ -51,7 +39,7 @@ const sendRandomQuiz = async (ctx: Context) => {
 
   if (chatId !== undefined) {
     // Combine both biology and physics quizzes into one array
-    const allQuizzes = [...biologyQuizzes, ...physicsQuizzes];
+    const allQuizzes = [...questionsData.biology, ...questionsData.physics];
     
     // Select a random quiz
     const randomQuiz = allQuizzes[Math.floor(Math.random() * allQuizzes.length)];
