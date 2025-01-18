@@ -12,6 +12,7 @@ import { list } from './commands/list';
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
 import { calculator } from './text'; // Importing calculator.ts
+import { funInteraction } from './text'; // Importing funInteraction.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -29,11 +30,14 @@ bot.command('jee', jee());
 bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
-// Message handling (including greeting, calculator, and pyq handlers)
+// Message handling (including greeting, funInteraction, calculator, and pyq handlers)
 bot.on('message', async (ctx) => {
   // Call the greeting handler
   await greeting()(ctx);
-  
+
+  // Call the funInteraction handler
+  await funInteraction()(ctx); // Added funInteraction handler
+
   // Call the pyq handler
   await pyq()(ctx); // Added pyq handler
 
