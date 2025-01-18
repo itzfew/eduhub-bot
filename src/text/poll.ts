@@ -3,88 +3,84 @@ import createDebug from 'debug';
 
 const debug = createDebug('bot:poll');
 
-// Sample list of biology questions (you can add more questions)
-const bioQuestions = [
-  { question: "What is the powerhouse of the cell?", options: ["Mitochondria", "Nucleus", "Ribosome", "Endoplasmic Reticulum"], correctAnswer: "Mitochondria" },
-  { question: "What is the chemical formula for water?", options: ["H2O", "CO2", "O2", "H2O2"], correctAnswer: "H2O" },
-  { question: "What is the main function of red blood cells?", options: ["Transport oxygen", "Fight infection", "Produce hormones", "Carry nutrients"], correctAnswer: "Transport oxygen" },
-  { question: "Which organ is responsible for detoxifying the body?", options: ["Liver", "Heart", "Lungs", "Kidney"], correctAnswer: "Liver" },
-  { question: "What process do plants use to make food?", options: ["Photosynthesis", "Respiration", "Digestion", "Transpiration"], correctAnswer: "Photosynthesis" },
-  { question: "What is the largest organ in the human body?", options: ["Skin", "Liver", "Brain", "Heart"], correctAnswer: "Skin" },
-  { question: "What is DNA responsible for?", options: ["Carrying genetic information", "Producing energy", "Regulating hormones", "Making proteins"], correctAnswer: "Carrying genetic information" },
-  { question: "Which gas do humans exhale?", options: ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"], correctAnswer: "Carbon dioxide" },
-  { question: "What part of the plant absorbs water?", options: ["Roots", "Leaves", "Stem", "Flowers"], correctAnswer: "Roots" },
-  { question: "What is the function of the chloroplast?", options: ["Photosynthesis", "Respiration", "Circulation", "Digestion"], correctAnswer: "Photosynthesis" },
+// Sample random biology polls
+const biologyPolls = [
+  { question: "What is the powerhouse of the cell?", options: ["Mitochondria", "Nucleus", "Chloroplast", "Endoplasmic Reticulum"] },
+  { question: "Which vitamin is produced when the skin is exposed to sunlight?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"] },
+  { question: "What is the genetic material in all living organisms?", options: ["DNA", "RNA", "Proteins", "Carbohydrates"] },
+  // Add more biology-related questions here...
 ];
 
-// Main poll function (with multiple questions and results)
+// Sample random physics polls
+const physicsPolls = [
+  { question: "What is the unit of force?", options: ["Newton", "Joule", "Watt", "Pascal"] },
+  { question: "What is the speed of light?", options: ["3 × 10^8 m/s", "2 × 10^8 m/s", "1 × 10^8 m/s", "5 × 10^8 m/s"] },
+  { question: "Who developed the theory of relativity?", options: ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Nikola Tesla"] },
+  // Add more physics-related questions here...
+];
+
+// Main poll function
 const poll = () => async (ctx: Context) => {
   debug('Triggered "poll" command');
 
   const messageId = ctx.message?.message_id;
   const userName = `${ctx.message?.from.first_name}`;
-  
+
+  // Get the message text or handle non-text messages
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
-  
+
   if (messageId) {
     if (userMessage) {
-      // Handle "/startpoll bio"
-      if (userMessage === '/startpoll bio') {
-        // Randomly shuffle the questions and select 10
-        const selectedQuestions = bioQuestions.sort(() => Math.random() - 0.5).slice(0, 10);
+      // Process text messages only
+      if (userMessage.startsWith('/startpoll')) {
+        const parts = userMessage.split(' ');
+        const subject = parts[1]?.toLowerCase();
 
-        let questionIndex = 0;
-        let score = 0;
-
-        // Start the quiz with the first question
-        const askNextQuestion = async () => {
-          if (questionIndex < selectedQuestions.length) {
-            const { question, options } = selectedQuestions[questionIndex];
-            const chatId = ctx.chat?.id;
-            if (chatId !== undefined) {
-              try {
-                const pollMessage = await ctx.telegram.sendPoll(chatId, question, options, {
-                  is_anonymous: false,
-                  allows_multiple_answers: false,
-                });
-
-                // Wait for a response on the poll (no need to use 'on')
-                ctx.on('poll_answer', async (answerCtx) => {
-                  const userAnswer = answerCtx.poll_answer.option_ids;
-                  const selectedOption = options[userAnswer[0]];
-
-                  // Provide feedback on the answer
-                  if (selectedOption === selectedQuestions[questionIndex].correctAnswer) {
-                    score++;
-                    await ctx.reply(`${userName}, your answer is correct! 🎉`);
-                  } else {
-                    await ctx.reply(`${userName}, your answer is incorrect. Try again! ❌`);
-                  }
-
-                  // Move to the next question
-                  questionIndex++;
-                  await askNextQuestion(); // Ask next question
-                });
-              } catch (error) {
-                debug('Error sending poll:', error);
-                await ctx.reply('Something went wrong while sending the poll.');
-              }
-            }
-          } else {
-            // Quiz completed, show results
-            await ctx.reply(`${userName}, you finished the quiz! Your score is: ${score} out of ${selectedQuestions.length}. 🎉`);
-          }
-        };
-
-        // Start the first question
-        await askNextQuestion();
-
+        if (subject === 'biology') {
+          await sendPolls(ctx, biologyPolls);
+        } else if (subject === 'physics') {
+          await sendPolls(ctx, physicsPolls);
+        } else {
+          await ctx.reply(`Sorry, I don't have polls for ${subject}. Try typing /startpoll biology or /startpoll physics.`);
+        }
       } else if (userMessage.includes('poll')) {
-        await ctx.reply(`Hey ${userName}, I can help you create a quiz! Type /startpoll bio to begin!`);
+        await ctx.reply(`Hey ${userName}, I can help you create a poll. Type /startpoll followed by a subject (e.g., /startpoll biology).`);
       }
     } else {
+      // Handle non-text messages (e.g., media)
       await ctx.reply(`I can only respond to text messages. Please send a text command.`);
     }
+  }
+};
+
+// Function to send 10 random polls with a 30-second interval
+const sendPolls = async (ctx: Context, polls: { question: string, options: string[] }[]) => {
+  const chatId = ctx.chat?.id;
+
+  if (chatId !== undefined) {
+    let pollCount = 0;
+
+    const interval = setInterval(async () => {
+      if (pollCount >= 10) {
+        clearInterval(interval); // Stop after 10 polls
+        await ctx.reply('You have completed all polls!');
+      } else {
+        const randomPoll = polls[Math.floor(Math.random() * polls.length)];
+        try {
+          // Send the poll to the user
+          await ctx.telegram.sendPoll(chatId, randomPoll.question, randomPoll.options, {
+            is_anonymous: true,
+            allows_multiple_answers: false,
+          });
+          pollCount++;
+        } catch (error) {
+          debug('Error sending poll:', error);
+          await ctx.reply('Something went wrong while sending the poll.');
+        }
+      }
+    }, 30000); // Send a poll every 30 seconds
+  } else {
+    await ctx.reply('Chat ID is not valid. Please try again later.');
   }
 };
 
