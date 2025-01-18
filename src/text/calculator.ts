@@ -5,96 +5,56 @@ const debug = createDebug('bot:calculator');
 
 // Main calculator function
 const calculator = () => async (ctx: Context) => {
-  debug('Triggered calculator command');
+  debug('Triggered "calculator" command');
 
   const messageId = ctx.message?.message_id;
-  const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.trim() : null;
+  const userName = `${ctx.message?.from.first_name}`;
 
-  if (messageId && userMessage) {
-    // Extract the command and arguments
-    const [command, ...args] = userMessage.split(' ');
+  // Get the message text or handle non-text messages
+  const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
-    switch (command.toLowerCase()) {
-      case '/add': {
-        const numbers = args.map(Number);
-        if (numbers.some(isNaN)) {
-          await ctx.reply('Please provide valid numbers. Example: /add 5 10');
-        } else {
-          const sum = numbers.reduce((acc, num) => acc + num, 0);
-          await ctx.reply(`The sum is: ${sum}`);
-        }
-        break;
-      }
-
-      case '/subtract': {
-        if (args.length < 2) {
-          await ctx.reply('Please provide at least two numbers. Example: /subtract 10 5');
-        } else {
-          const numbers = args.map(Number);
-          if (numbers.some(isNaN)) {
-            await ctx.reply('Please provide valid numbers.');
-          } else {
-            const difference = numbers.reduce((acc, num) => acc - num);
-            await ctx.reply(`The result is: ${difference}`);
-          }
-        }
-        break;
-      }
-
-      case '/multiply': {
-        const numbers = args.map(Number);
-        if (numbers.some(isNaN)) {
-          await ctx.reply('Please provide valid numbers. Example: /multiply 5 10');
-        } else {
-          const product = numbers.reduce((acc, num) => acc * num, 1);
-          await ctx.reply(`The product is: ${product}`);
-        }
-        break;
-      }
-
-      case '/divide': {
-        if (args.length !== 2) {
-          await ctx.reply('Please provide exactly two numbers. Example: /divide 10 2');
-        } else {
-          const [num1, num2] = args.map(Number);
-          if (isNaN(num1) || isNaN(num2)) {
-            await ctx.reply('Please provide valid numbers.');
-          } else if (num2 === 0) {
-            await ctx.reply('Division by zero is not allowed.');
-          } else {
-            const quotient = num1 / num2;
-            await ctx.reply(`The result is: ${quotient}`);
-          }
-        }
-        break;
-      }
-
-      case '/calculate': {
-        const expression = args.join(' ');
+  if (messageId) {
+    if (userMessage) {
+      // Extract operation and numbers from the command
+      const parseMathExpression = (expression: string): number | string => {
         try {
-          // Evaluate the expression securely
-          const result = eval(expression); // Use with caution in real-world apps, consider a math library for safety
-          await ctx.reply(`The result of "${expression}" is: ${result}`);
-        } catch (err) {
-          await ctx.reply('Invalid expression. Please provide a valid mathematical expression.');
+          // Sanitize and evaluate the expression
+          const sanitizedExpression = expression.replace(/[^\d+\-*/().]/g, ''); // Allow only numbers and operators
+          return eval(sanitizedExpression);
+        } catch (error) {
+          return 'Invalid expression! Please ensure your input is correct.';
         }
-        break;
-      }
+      };
 
-      case '/calc_help': {
-        await ctx.reply(`Calculator Commands:
-1. /add [numbers] - Add numbers. Example: /add 5 10
-2. /subtract [numbers] - Subtract numbers. Example: /subtract 10 5
-3. /multiply [numbers] - Multiply numbers. Example: /multiply 2 3
-4. /divide [num1] [num2] - Divide two numbers. Example: /divide 10 2
-5. /calculate [expression] - Evaluate a mathematical expression. Example: /calculate 5 + 10 * 2
-6. /calc_help - Show this help message`);
-        break;
+      if (userMessage.startsWith('/add')) {
+        const expression = userMessage.replace('/add', '').trim();
+        const result = parseMathExpression(expression);
+        await ctx.reply(`The result of addition is: ${result}`);
+      } else if (userMessage.startsWith('/subtract')) {
+        const expression = userMessage.replace('/subtract', '').trim();
+        const result = parseMathExpression(expression);
+        await ctx.reply(`The result of subtraction is: ${result}`);
+      } else if (userMessage.startsWith('/multiply')) {
+        const expression = userMessage.replace('/multiply', '').trim();
+        const result = parseMathExpression(expression);
+        await ctx.reply(`The result of multiplication is: ${result}`);
+      } else if (userMessage.startsWith('/divide')) {
+        const expression = userMessage.replace('/divide', '').trim();
+        const result = parseMathExpression(expression);
+        await ctx.reply(`The result of division is: ${result}`);
+      } else if (userMessage.includes('/commands')) {
+        await ctx.reply(`Calculator Bot Commands:
+        
+1. /add <expression> - Add numbers (e.g., /add 2+3)
+2. /subtract <expression> - Subtract numbers (e.g., /subtract 5-2)
+3. /multiply <expression> - Multiply numbers (e.g., /multiply 3*4)
+4. /divide <expression> - Divide numbers (e.g., /divide 8/2)`);
+      } else {
+        await ctx.reply(`I didn't understand that command, ${userName}. Use /commands to see what I can do.`);
       }
-
-      default: {
-        await ctx.reply('Invalid command. Type /calc_help to see the list of available commands.');
-      }
+    } else {
+      // Handle non-text messages (e.g., media)
+      await ctx.reply(`I can only respond to text messages. Please send a text command.`);
     }
   }
 };
