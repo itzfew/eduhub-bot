@@ -10,7 +10,57 @@ const biologyQuizzes = [
   { "question": "What is the genetic material in all living organisms?", "options": ["DNA", "RNA", "Proteins", "Carbohydrates"], "correctAnswer": 0 },
   { "question": "How many times does decarboxylation occur during each TCA cycle?", "options": ["Thrice", "Many", "Once", "Twice"], "correctAnswer": 3 },
   { "question": "The dissolution of synaptonemal complex occurs during:", "options": ["Pachytene", "Diplotene", "Diakinesis", "Leptotene"], "correctAnswer": 1 },
-  { "question": "Doubling of the number of chromosomes can be achieved by disrupting mitotic cell division soon after:", "options": ["Anaphase", "Telophase", "Prophase"], "correctAnswer": 0 }
+  { "question": "Doubling of the number of chromosomes can be achieved by disrupting mitotic cell division soon after:", "options": ["Anaphase", "Telophase", "Prophase"], "correctAnswer": 0 },
+  {
+  "question": "What is the largest organ in the human body?",
+  "options": ["Heart", "Brain", "Liver", "Skin"],
+  "correctAnswer": 3
+},
+{
+  "question": "Which part of the plant is responsible for photosynthesis?",
+  "options": ["Roots", "Stem", "Leaves", "Flowers"],
+  "correctAnswer": 2
+},
+{
+  "question": "What is the process by which plants make their own food?",
+  "options": ["Respiration", "Transpiration", "Photosynthesis", "Fermentation"],
+  "correctAnswer": 2
+},
+{
+  "question": "Which gas do plants absorb during photosynthesis?",
+  "options": ["Oxygen", "Nitrogen", "Carbon Dioxide", "Methane"],
+  "correctAnswer": 2
+},
+{
+  "question": "What is the function of red blood cells?",
+  "options": ["Fight infections", "Carry oxygen", "Regulate body temperature", "Control body movement"],
+  "correctAnswer": 1
+},
+{
+  "question": "What type of bond holds the two strands of a DNA molecule together?",
+  "options": ["Ionic bond", "Covalent bond", "Hydrogen bond", "Peptide bond"],
+  "correctAnswer": 2
+},
+{
+  "question": "Which organelle is known as the 'control center' of the cell?",
+  "options": ["Nucleus", "Mitochondria", "Chloroplast", "Golgi Apparatus"],
+  "correctAnswer": 0
+},
+{
+  "question": "Which vitamin helps in the absorption of calcium?",
+  "options": ["Vitamin A", "Vitamin B", "Vitamin D", "Vitamin K"],
+  "correctAnswer": 2
+},
+{
+  "question": "What is the primary source of energy for the human body?",
+  "options": ["Fats", "Carbohydrates", "Proteins", "Vitamins"],
+  "correctAnswer": 1
+},
+{
+  "question": "Which of the following is NOT a part of the cell theory?",
+  "options": ["All living organisms are made of cells", "The cell is the basic unit of life", "All cells have a nucleus", "Cells arise from pre-existing cells"],
+  "correctAnswer": 2
+}
 ];
 
 // Sample random physics quizzes
