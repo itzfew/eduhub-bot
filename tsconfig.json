@@ -8,7 +8,9 @@
     "sourceMap": true,
     "outDir": "public",
     "lib": ["esnext", "dom"],
+    "typeRoots": ["node_modules/@types"],
     "resolveJsonModule": true
+    
   },
   "exclude": ["node_modules"]
 }
