@@ -33,19 +33,10 @@ const poll = () => async (ctx: Context) => {
     if (userMessage) {
       // Process text messages only
       if (userMessage.startsWith('/startpoll')) {
-        const parts = userMessage.split(' ');
-        const subject = parts[1]?.toLowerCase();
-        const pollCount = parseInt(parts[2] || '1'); // Default to 1 if no number is provided
-
-        if (subject === 'biology') {
-          await sendQuizzes(ctx, biologyQuizzes, pollCount);
-        } else if (subject === 'physics') {
-          await sendQuizzes(ctx, physicsQuizzes, pollCount);
-        } else {
-          await ctx.reply(`Sorry, I don't have polls for ${subject}. Try typing /startpoll biology or /startpoll physics.`);
-        }
+        // Send 1 random quiz from any subject (biology or physics)
+        await sendRandomQuiz(ctx);
       } else if (userMessage.includes('poll')) {
-        await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll followed by a subject and the number of polls (e.g., /startpoll biology 2).`);
+        await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll to get a random quiz from biology or physics.`);
       }
     } else {
       // Handle non-text messages (e.g., media)
@@ -54,33 +45,28 @@ const poll = () => async (ctx: Context) => {
   }
 };
 
-// Function to send quizzes based on the user input
-const sendQuizzes = async (ctx: Context, quizzes: { question: string, options: string[], correctAnswer: number }[], pollCount: number) => {
+// Function to send a random quiz from either biology or physics
+const sendRandomQuiz = async (ctx: Context) => {
   const chatId = ctx.chat?.id;
 
   if (chatId !== undefined) {
-    let quizSent = 0;
-
-    // Send the requested number of quizzes (1 if pollCount is 1, or more if specified)
-    while (quizSent < pollCount) {
-      const randomQuiz = quizzes[Math.floor(Math.random() * quizzes.length)];
-      try {
-        // Send the quiz to the user
-        await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
-          correct_option_id: randomQuiz.correctAnswer,
-          is_anonymous: false, // Not anonymous to track the answers
-          allows_multiple_answers: false,
-        });
-        quizSent++;
-      } catch (error) {
-        debug('Error sending quiz:', error);
-        await ctx.reply('Something went wrong while sending the quiz.');
-        break; // Stop if there's an error
-      }
+    // Combine both biology and physics quizzes into one array
+    const allQuizzes = [...biologyQuizzes, ...physicsQuizzes];
+    
+    // Select a random quiz
+    const randomQuiz = allQuizzes[Math.floor(Math.random() * allQuizzes.length)];
+    
+    try {
+      // Send the quiz to the user
+      await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
+        correct_option_id: randomQuiz.correctAnswer,
+        is_anonymous: false, // Not anonymous to track the answers
+        allows_multiple_answers: false,
+      });
+    } catch (error) {
+      debug('Error sending quiz:', error);
+      await ctx.reply('Something went wrong while sending the quiz.');
     }
-
-    // Notify the user after sending the quizzes
-    await ctx.reply(`You have completed ${quizSent} quiz${quizSent > 1 ? 'es' : ''}.`);
   } else {
     await ctx.reply('Chat ID is not valid. Please try again later.');
   }
