@@ -9,7 +9,7 @@ const quizes = () => async (ctx: Context) => {
   const message = `*${name} Quizzes*:
   
   \n\n
-  **Available Quizzes**: Access them at [Quizzes Link](https://itzfew.github.io/Quizes/)
+  **Available Quizzes**: Access them at [Quizzes Link](https://quizes.pages.dev/)
   
   **Available Exams**:
   - JEE Main Misc
