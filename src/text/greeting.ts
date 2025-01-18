@@ -1150,7 +1150,7 @@ const quizData = [
         "papers": [
             {
                 "metaId": "de89a0f9-dd5c-52ef-8a2e-c9700c6228b9",
-                "exam": "jee-main7",
+                "exam": "jee-main6",
                 "examGroup": "jee",
                 "title": "JEE Main 2017 (Online) 9th April Morning Slot",
                 "year": 2017
@@ -1312,9 +1312,8 @@ const quizData = [
                 "name": "AIEEE 2002",
                 "year": 2002,
                 "title": "AIEEE 2002"
-            },
-            ],
-    },
+            }
+        ],
         "yearwise": [
             [
                 "2024",
