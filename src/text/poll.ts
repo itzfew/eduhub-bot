@@ -20,12 +20,16 @@ const physicsQuizzes = [
   { "question": "Who developed the theory of relativity?", "options": ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Nikola Tesla"], "correctAnswer": 1 }
 ];
 
+// In-memory storage for tracking user results
+const userResults: Map<string, { score: number, answers: number[] }> = new Map();
+
 // Main poll function
 const poll = () => async (ctx: Context) => {
   debug('Triggered "poll" command');
   const messageId = ctx.message?.message_id;
   const userName = `${ctx.message?.from.first_name}`;
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
+  const userId = ctx.message?.from.id.toString(); // Unique identifier for user
 
   if (messageId && userMessage) {
     if (userMessage.startsWith('/startpoll')) {
@@ -33,34 +37,46 @@ const poll = () => async (ctx: Context) => {
 
       if (subject && subject === 'biology') {
         const numberOfQuestions = count ? parseInt(count) : 1; // Default to 1 question if no count is provided
-        await sendRandomQuizzes(ctx, biologyQuizzes, numberOfQuestions);
+        await sendRandomQuizzes(ctx, biologyQuizzes, numberOfQuestions, userId);
       } else if (subject === 'physics') {
         const numberOfQuestions = count ? parseInt(count) : 1; // Default to 1 question if no count is provided
-        await sendRandomQuizzes(ctx, physicsQuizzes, numberOfQuestions);
+        await sendRandomQuizzes(ctx, physicsQuizzes, numberOfQuestions, userId);
       } else {
         // Send 1 random quiz from either subject
-        await sendRandomQuiz(ctx);
+        await sendRandomQuiz(ctx, userId);
       }
     } else if (userMessage.includes('poll')) {
       await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll biology or /startpoll physics to get a quiz.`);
     } else if (userMessage === '/results') {
-      await ctx.reply(`Results are coming soon!`); // You can modify this to show real results
+      await showResults(ctx, userId); // Display results
     }
   }
 };
 
 // Function to send a random quiz from either biology or physics
-const sendRandomQuiz = async (ctx: Context) => {
+const sendRandomQuiz = async (ctx: Context, userId: string) => {
   const chatId = ctx.chat?.id;
   if (chatId !== undefined) {
     const allQuizzes = [...biologyQuizzes, ...physicsQuizzes];
     const randomQuiz = allQuizzes[Math.floor(Math.random() * allQuizzes.length)];
+
+    // Initialize user data if not already set
+    if (!userResults.has(userId)) {
+      userResults.set(userId, { score: 0, answers: [] });
+    }
+
     try {
       await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
         correct_option_id: randomQuiz.correctAnswer,
         is_anonymous: false, // Not anonymous to track the answers
         allows_multiple_answers: false,
       });
+
+      // Update user data for this quiz (you can track more detailed info like quiz number)
+      const userResult = userResults.get(userId);
+      if (userResult) {
+        userResult.answers.push(randomQuiz.correctAnswer); // Add correct answer index (or user selection in further steps)
+      }
     } catch (error) {
       debug('Error sending quiz:', error);
       await ctx.reply('Something went wrong while sending the quiz.');
@@ -71,7 +87,7 @@ const sendRandomQuiz = async (ctx: Context) => {
 };
 
 // Function to send multiple random quizzes from a specific subject
-const sendRandomQuizzes = async (ctx: Context, quizzes: Array<any>, count: number) => {
+const sendRandomQuizzes = async (ctx: Context, quizzes: Array<any>, count: number, userId: string) => {
   const chatId = ctx.chat?.id;
   if (chatId !== undefined) {
     const randomQuizzes = [];
@@ -86,13 +102,24 @@ const sendRandomQuizzes = async (ctx: Context, quizzes: Array<any>, count: numbe
       }
     }
 
+    // Initialize user data if not already set
+    if (!userResults.has(userId)) {
+      userResults.set(userId, { score: 0, answers: [] });
+    }
+
     try {
       for (const quiz of randomQuizzes) {
         await ctx.telegram.sendQuiz(chatId, quiz.question, quiz.options, {
           correct_option_id: quiz.correctAnswer,
-          is_anonymous: false, // Not anonymous to track the answers
+          is_anonymous: false,
           allows_multiple_answers: false,
         });
+
+        // Update user data for this quiz
+        const userResult = userResults.get(userId);
+        if (userResult) {
+          userResult.answers.push(quiz.correctAnswer);
+        }
       }
     } catch (error) {
       debug('Error sending quizzes:', error);
@@ -100,6 +127,22 @@ const sendRandomQuizzes = async (ctx: Context, quizzes: Array<any>, count: numbe
     }
   } else {
     await ctx.reply('Chat ID is not valid. Please try again later.');
+  }
+};
+
+// Function to show results for a user
+const showResults = async (ctx: Context, userId: string) => {
+  const userResult = userResults.get(userId);
+
+  if (userResult) {
+    const correctAnswersCount = userResult.answers.filter((answer, index) => {
+      const quiz = [...biologyQuizzes, ...physicsQuizzes][index]; // Use the combined quizzes array to track answers
+      return answer === quiz.correctAnswer;
+    }).length;
+
+    await ctx.reply(`Your results:\nCorrect Answers: ${correctAnswersCount}\nTotal Questions: ${userResult.answers.length}`);
+  } else {
+    await ctx.reply('No results found. Please start a quiz first using /startpoll.');
   }
 };
 
