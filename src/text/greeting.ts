@@ -683,7 +683,7 @@ const quizData = [
                 "title": "JEE Main 2021 (Online) 31st August Morning Shift",
                 "year": 2021
             },
-            ]
+            ],
         "yearwise": null
     },
     {
