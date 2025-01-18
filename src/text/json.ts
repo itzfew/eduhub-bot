@@ -20,7 +20,7 @@ const json = () => async (ctx: Context) => {
         id: ctx.message?.from.id
       },
       message: {
-        text: ctx.message?.text,
+        text: ctx.message?.text, // safely access the text
         date: ctx.message?.date
       }
     };
