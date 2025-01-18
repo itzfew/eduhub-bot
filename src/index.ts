@@ -7,7 +7,7 @@ import { neet } from './commands/neet';
 import { jee } from './commands/jee';
 import { quizes } from './commands/quizes';
 import { groups } from './commands/groups';
-import { list } from './commands';
+import { list } from './commands/list';
 
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
