@@ -1,19 +1,23 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
-import axios from 'axios';
 
 const debug = createDebug('bot:poll');
 
-// Fetch questions from the GitHub URL
-const fetchQuestions = async () => {
-  try {
-    const response = await axios.get('https://raw.githubusercontent.com/itzfew/eduhub-bot/refs/heads/master/questions.json');
-    return response.data; // Return the parsed JSON data
-  } catch (error) {
-    debug('Error fetching questions:', error);
-    throw new Error('Failed to fetch questions.');
-  }
-};
+// Sample random biology quizzes
+const biologyQuizzes = [
+  { question: "What is the powerhouse of the cell?", options: ["Mitochondria", "Nucleus", "Chloroplast", "Endoplasmic Reticulum"], correctAnswer: 0 },
+  { question: "Which vitamin is produced when the skin is exposed to sunlight?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], correctAnswer: 3 },
+  { question: "What is the genetic material in all living organisms?", options: ["DNA", "RNA", "Proteins", "Carbohydrates"], correctAnswer: 0 },
+  // Add more biology-related questions here...
+];
+
+// Sample random physics quizzes
+const physicsQuizzes = [
+  { question: "What is the unit of force?", options: ["Newton", "Joule", "Watt", "Pascal"], correctAnswer: 0 },
+  { question: "What is the speed of light?", options: ["3 × 10^8 m/s", "2 × 10^8 m/s", "1 × 10^8 m/s", "5 × 10^8 m/s"], correctAnswer: 0 },
+  { question: "Who developed the theory of relativity?", options: ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Nikola Tesla"], correctAnswer: 1 },
+  // Add more physics-related questions here...
+];
 
 // Main poll function
 const poll = () => async (ctx: Context) => {
@@ -29,19 +33,10 @@ const poll = () => async (ctx: Context) => {
     if (userMessage) {
       // Process text messages only
       if (userMessage.startsWith('/startpoll')) {
-        // Parse the command to extract the subject and number of questions
-        const [command, subject, numQuestions] = userMessage.split(' ');
-
-        if (subject && numQuestions) {
-          // Send specified number of questions
-          const numberOfQuestions = parseInt(numQuestions, 10);
-          await sendRandomQuiz(ctx, subject, numberOfQuestions);
-        } else {
-          // Send 1 random quiz by default
-          await sendRandomQuiz(ctx);
-        }
+        // Send 1 random quiz from any subject (biology or physics)
+        await sendRandomQuiz(ctx);
       } else if (userMessage.includes('poll')) {
-        await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll <subject> <number> to get random quizzes from biology or physics.`);
+        await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll to get a random quiz from biology or physics.`);
       }
     } else {
       // Handle non-text messages (e.g., media)
@@ -50,36 +45,24 @@ const poll = () => async (ctx: Context) => {
   }
 };
 
-// Function to send random quiz questions
-const sendRandomQuiz = async (ctx: Context, subject: string = '', numQuestions: number = 1) => {
+// Function to send a random quiz from either biology or physics
+const sendRandomQuiz = async (ctx: Context) => {
   const chatId = ctx.chat?.id;
 
   if (chatId !== undefined) {
+    // Combine both biology and physics quizzes into one array
+    const allQuizzes = [...biologyQuizzes, ...physicsQuizzes];
+    
+    // Select a random quiz
+    const randomQuiz = allQuizzes[Math.floor(Math.random() * allQuizzes.length)];
+    
     try {
-      // Fetch questions
-      const questionsData = await fetchQuestions();
-      const subjectData = questionsData[subject.toLowerCase()]; // Get the subject data (biology or physics)
-
-      if (!subjectData) {
-        await ctx.reply('Invalid subject. Please try "biology" or "physics".');
-        return;
-      }
-
-      // Select random questions based on the user's requested number
-      const randomQuestions = [];
-      for (let i = 0; i < numQuestions; i++) {
-        const randomQuiz = subjectData[Math.floor(Math.random() * subjectData.length)];
-        randomQuestions.push(randomQuiz);
-      }
-
-      // Send the selected quizzes to the user
-      for (const randomQuiz of randomQuestions) {
-        await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
-          correct_option_id: randomQuiz.correctAnswer,
-          is_anonymous: false, // Not anonymous to track the answers
-          allows_multiple_answers: false,
-        });
-      }
+      // Send the quiz to the user
+      await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
+        correct_option_id: randomQuiz.correctAnswer,
+        is_anonymous: false, // Not anonymous to track the answers
+        allows_multiple_answers: false,
+      });
     } catch (error) {
       debug('Error sending quiz:', error);
       await ctx.reply('Something went wrong while sending the quiz.');
