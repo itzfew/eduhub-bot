@@ -50,4 +50,4 @@ const handlePdfRequest = () => async (ctx: Context) => {
   }
 };
 
-export { handlePdfRequest };
+export { pdf };
