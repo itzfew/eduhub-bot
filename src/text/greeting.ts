@@ -39,7 +39,8 @@ const greeting = () => async (ctx: Context) => {
 5. /jee - Access resources for JEE
 6. /study - Get study materials for various subjects
 7. /pyq - View previous year's questions
-8. /exam - Access exam resources`);
+8. /cal - calculator
+9. /exam - Access exam resources`);
       }
       // Removed the "I don't understand" response
     } else {
