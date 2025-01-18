@@ -47,7 +47,7 @@ const calculator = () => async (ctx: Context) => {
       const expression = standardizeExpression(userMessage.replace('/divide', '').trim());
       const result = parseMathExpression(expression);
       await ctx.reply(`The result of division is: ${result}`);
-    } else if (userMessage.includes('/commands')) {
+    } else if (userMessage.includes('/cal')) {
       await ctx.reply(`Calculator Bot Commands:
       
 1. /add <expression> - Add numbers (e.g., /add 2+3, 2 plus 3)
@@ -60,11 +60,8 @@ You can also type expressions directly using words or symbols like:
 - "6 divided by 3" or "6 / 3"
 - "4 times 5" or "4 * 5"
 - "7 minus 2" or "7 - 2"`);
-    } else {
-      await ctx.reply(`I didn't understand that command, ${userName}. Use /commands to see what I can do.`);
     }
-  } else {
-    await ctx.reply(`I can only respond to text messages. Please send a text command.`);
+    // No response for unknown commands or messages
   }
 };
 
