@@ -8,7 +8,9 @@ const json = () => async (ctx: Context) => {
   debug('Triggered "json" command');
 
   const userName = `${ctx.message?.from.first_name}`;
-  const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
+  
+  // Check if the message is a text message
+  const userMessage = ctx.message?.text ? ctx.message.text.toLowerCase() : null;
 
   if (userMessage === '/json') {
     // Create a JSON object with relevant user data
