@@ -828,7 +828,13 @@ const quizData = [
                 "examGroup": "jee",
                 "title": "JEE Main 2021 (Online) 25th February Evening Shift",
                 "year": 2021
-            },
+                        },
+            ],
+        "yearwise": null
+    },
+    {
+        "title": "jee-advanced",
+        "papers": [
             {
                 "metaId": "69a4e85a-464c-5b19-91a7-4fa368efe55d",
                 "exam": "jee-main5",
@@ -976,7 +982,13 @@ const quizData = [
                 "examGroup": "jee",
                 "title": "JEE Main 2019 (Online) 12th April Evening Slot",
                 "year": 2019
-            },
+                        },
+            ],
+        "yearwise": null
+    },
+    {
+        "title": "jee-advanced",
+        "papers": [
             {
                 "metaId": "6c579596-f3fb-51cb-9cd8-7699452b6311",
                 "exam": "jee-main6",
@@ -1129,7 +1141,13 @@ const quizData = [
                     "en",
                     "hi"
                 ]
-            },
+                        },
+            ],
+        "yearwise": null
+    },
+    {
+        "title": "jee-advanced",
+        "papers": [
             {
                 "metaId": "de89a0f9-dd5c-52ef-8a2e-c9700c6228b9",
                 "exam": "jee-main6",
