@@ -11,7 +11,8 @@ import { list } from './commands/list';
 
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
-import { calculator } from './text/calculator'; // Importing calculator.ts
+import { calculator } from './text'; // Importing calculator.ts
+import { timer } from './text'; // Importing timer.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -29,6 +30,7 @@ bot.command('jee', jee());
 bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
+bot.command('timer', timer()); // Registering the timer command
 
 // Message handling (including greeting, calculator, and pyq handlers)
 bot.on('message', async (ctx) => {
