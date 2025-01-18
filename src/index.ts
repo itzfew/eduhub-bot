@@ -11,8 +11,8 @@ import { list } from './commands/list';
 
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
-import { calculator } from './text/calculator'; // Importing calculator.ts
-import { pdf } from './text/pdf'; // Importing pdf.ts
+import { calculator } from './text'; // Importing calculator.ts
+import { pdf } from './text'; // Importing pdf.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
