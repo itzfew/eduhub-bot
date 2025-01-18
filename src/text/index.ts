@@ -1,3 +1,3 @@
 export * from './greeting';
 export * from './pyq';
-export * from './groupCommands';  // Added export for groupCommands
+export * from './calculator';  // Updated export to use calculator instead of groupCommands
