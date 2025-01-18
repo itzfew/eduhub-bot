@@ -35,22 +35,17 @@ const poll = () => async (ctx: Context) => {
       if (userMessage.startsWith('/startpoll')) {
         const parts = userMessage.split(' ');
         const subject = parts[1]?.toLowerCase();
-        let intervalTime = 30000; // Default to 30 seconds
-
-        // Optional: Check if a custom interval is provided (e.g., /startpoll biology 60000 for 1 minute)
-        if (parts.length > 2 && !isNaN(Number(parts[2]))) {
-          intervalTime = Number(parts[2]);
-        }
+        const pollCount = parseInt(parts[2] || '1'); // Default to 1 if no number is provided
 
         if (subject === 'biology') {
-          await sendQuizzes(ctx, biologyQuizzes, intervalTime);
+          await sendQuizzes(ctx, biologyQuizzes, pollCount);
         } else if (subject === 'physics') {
-          await sendQuizzes(ctx, physicsQuizzes, intervalTime);
+          await sendQuizzes(ctx, physicsQuizzes, pollCount);
         } else {
-          await ctx.reply(`Sorry, I don't have quizzes for ${subject}. Try typing /startpoll biology or /startpoll physics.`);
+          await ctx.reply(`Sorry, I don't have polls for ${subject}. Try typing /startpoll biology or /startpoll physics.`);
         }
       } else if (userMessage.includes('poll')) {
-        await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll followed by a subject (e.g., /startpoll biology).`);
+        await ctx.reply(`Hey ${userName}, I can help you create a quiz. Type /startpoll followed by a subject and the number of polls (e.g., /startpoll biology 2).`);
       }
     } else {
       // Handle non-text messages (e.g., media)
@@ -59,33 +54,33 @@ const poll = () => async (ctx: Context) => {
   }
 };
 
-// Function to send 10 random quizzes with a customizable interval
-const sendQuizzes = async (ctx: Context, quizzes: { question: string, options: string[], correctAnswer: number }[], intervalTime: number) => {
+// Function to send quizzes based on the user input
+const sendQuizzes = async (ctx: Context, quizzes: { question: string, options: string[], correctAnswer: number }[], pollCount: number) => {
   const chatId = ctx.chat?.id;
 
   if (chatId !== undefined) {
-    let quizCount = 0;
+    let quizSent = 0;
 
-    const interval = setInterval(async () => {
-      if (quizCount >= 10) {
-        clearInterval(interval); // Stop after 10 quizzes
-        await ctx.reply('You have completed all quizzes!');
-      } else {
-        const randomQuiz = quizzes[Math.floor(Math.random() * quizzes.length)];
-        try {
-          // Send the quiz to the user
-          await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
-            correct_option_id: randomQuiz.correctAnswer,
-            is_anonymous: false, // Not anonymous to track the answers
-            allows_multiple_answers: false,
-          });
-          quizCount++;
-        } catch (error) {
-          debug('Error sending quiz:', error);
-          await ctx.reply('Something went wrong while sending the quiz.');
-        }
+    // Send the requested number of quizzes (1 if pollCount is 1, or more if specified)
+    while (quizSent < pollCount) {
+      const randomQuiz = quizzes[Math.floor(Math.random() * quizzes.length)];
+      try {
+        // Send the quiz to the user
+        await ctx.telegram.sendQuiz(chatId, randomQuiz.question, randomQuiz.options, {
+          correct_option_id: randomQuiz.correctAnswer,
+          is_anonymous: false, // Not anonymous to track the answers
+          allows_multiple_answers: false,
+        });
+        quizSent++;
+      } catch (error) {
+        debug('Error sending quiz:', error);
+        await ctx.reply('Something went wrong while sending the quiz.');
+        break; // Stop if there's an error
       }
-    }, intervalTime); // Use the user-defined interval time
+    }
+
+    // Notify the user after sending the quizzes
+    await ctx.reply(`You have completed ${quizSent} quiz${quizSent > 1 ? 'es' : ''}.`);
   } else {
     await ctx.reply('Chat ID is not valid. Please try again later.');
   }
