@@ -1975,6 +1975,14 @@ const pyq = () => async (ctx: Context) => {
 
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
+  // Commands to be ignored
+  const ignoredCommands = ['/startpoll', '/cal', '/help', '/about', '/groups', '/commands'];
+
+  // If the message matches one of the ignored commands, do nothing
+  if (userMessage && ignoredCommands.includes(userMessage)) {
+    return;  // No response for these commands
+  }
+
   if (userMessage) {
     const userName = ctx.from?.first_name || 'Dear User';  // Retrieve user's first name
 
@@ -2055,17 +2063,18 @@ const pyq = () => async (ctx: Context) => {
           });
         } else {
           // If the paper input number is not valid
-          await ctx.reply('Invalid option. Please choose a valid paper number (e.g., 1, 1.1, etc.).');
+          await ctx.reply('Invalid option. Please choose a valid paper number (e.g., 1.1, 2.1, etc.).');
         }
       } else {
         // If the input number is not valid
-        await ctx.reply('Invalid option. Please choose a valid quiz number (e.g., 1, 1.1, etc.).');
+        await ctx.reply('Invalid option. Please choose a valid quiz number (e.g., 1.1, 1.2, etc.).');
       }
     } else {
       // Handle case when the user input is not a valid number or command
-      await ctx.reply('Please enter a valid command (e.g., /pyq or /exam) or a valid number (e.g., 1, 1.1, etc.) to get the quiz link.');
+      await ctx.reply('Please enter a valid command (e.g., /pyq or /exam) or a valid number (e.g., 1.1, 2.1, etc.) to get the quiz link.');
     }
   }
 };
 
 export { pyq };
+ 
