@@ -10,6 +10,7 @@ import { groups } from './commands/groups';
 import { list } from './commands/list';
 
 import { greeting } from './text';
+import { pyq } from './text'; // Importing pyq.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -32,6 +33,9 @@ bot.command('list', list());
 bot.on('message', async (ctx) => {
   // Call the greeting handler
   await greeting()(ctx);
+  
+  // Call the pyq handler
+  await pyq()(ctx); // Added pyq handler
 });
 
 // Production mode (Vercel)
