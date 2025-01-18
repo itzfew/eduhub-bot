@@ -8,39 +8,39 @@ const baseUrl = 'https://quizes.pages.dev/play?title=';
 
 // Array of quiz data with the specified format
 const quizData = [
-    {
-        "title": "jee-main-miscc",
-        "papers": [
-            {
-                "exam": "jee-main-miscc",
-                "examGroup": "jee",
-                "metaId": "emb-ait1",
-                "title": "JEE Main 2024 Misc Paper 1",
-                "year": 2024
-            },
-            {
-                "exam": "jee-main-miscc",
-                "examGroup": "jee",
-                "metaId": "emb-ait2",
-                "title": "JEE Main 2024 Misc Paper 2",
-                "year": 2024
-            },
-            {
-                "exam": "jee-main-miscc",
-                "examGroup": "jee",
-                "metaId": "emb-ait3",
-                "title": "JEE Main 2024 Misc Paper 3",
-                "year": 2024
-            },
-            {
-                "exam": "jee-main-miscc",
-                "examGroup": "jee",
-                "metaId": "emb-ait4",
-                "title": "JEE Main 2024 Misc Paper 4",
-                "year": 2024
-            }
-        ]
-    }
+  {
+    "title": "jee-main-misc",
+    "papers": [
+      {
+        "exam": "jee-main-misc",
+        "examGroup": "jee",
+        "metaId": "emb-ait1",
+        "title": "JEE Main 2024 Misc Paper 1",
+        "year": 2024
+      },
+      {
+        "exam": "jee-main-misc",
+        "examGroup": "jee",
+        "metaId": "emb-ait2",
+        "title": "JEE Main 2024 Misc Paper 2",
+        "year": 2024
+      },
+      {
+        "exam": "jee-main-misc",
+        "examGroup": "jee",
+        "metaId": "emb-ait3",
+        "title": "JEE Main 2024 Misc Paper 3",
+        "year": 2024
+      },
+      {
+        "exam": "jee-main-misc",
+        "examGroup": "jee",
+        "metaId": "emb-ait4",
+        "title": "JEE Main 2024 Misc Paper 4",
+        "year": 2024
+      }
+    ]
+  }
 ];
 
 const pyq = () => async (ctx: Context) => {
@@ -51,8 +51,8 @@ const pyq = () => async (ctx: Context) => {
   if (userMessage) {
     const userName = ctx.from?.first_name || 'Dear User';  // Retrieve user's first name
 
-    // If the user sends /start, prompt them to select an exam
-    if (userMessage === '/start') {
+    // If the user sends /pyq or /exam
+    if (userMessage === '/pyq' || userMessage === '/exam') {
       const exams = Array.from(new Set(quizData.map(quiz => quiz.papers[0].exam)));  // Extract unique exams
       let examList = 'Please select an exam:\n\n';
 
@@ -135,8 +135,8 @@ const pyq = () => async (ctx: Context) => {
         await ctx.reply('Invalid option. Please choose a valid quiz number (e.g., 1, 1.1, etc.).');
       }
     } else {
-      // Handle case when the user input is not a valid number
-      await ctx.reply('Please enter a valid number (e.g., 1, 1.1, etc.) to get the quiz link.');
+      // Handle case when the user input is not a valid number or command
+      await ctx.reply('Please enter a valid command (e.g., /pyq or /exam) or a valid number (e.g., 1, 1.1, etc.) to get the quiz link.');
     }
   }
 };
