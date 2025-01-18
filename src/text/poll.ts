@@ -60,6 +60,56 @@ const biologyQuizzes = [
   "question": "Which of the following is NOT a part of the cell theory?",
   "options": ["All living organisms are made of cells", "The cell is the basic unit of life", "All cells have a nucleus", "Cells arise from pre-existing cells"],
   "correctAnswer": 2
+},
+  {
+  "question": "Which of the following is a characteristic of a prokaryotic cell?",
+  "options": ["Presence of a nucleus", "Presence of membrane-bound organelles", "Lack of a nucleus", "Presence of a Golgi apparatus"],
+  "correctAnswer": 2
+},
+{
+  "question": "What is the function of insulin in the human body?",
+  "options": ["Regulates blood sugar levels", "Promotes digestion", "Regulates heartbeat", "Stimulates immune response"],
+  "correctAnswer": 0
+},
+{
+  "question": "Which of the following is a neurotransmitter?",
+  "options": ["Insulin", "Adrenaline", "Glucagon", "Oxytocin"],
+  "correctAnswer": 1
+},
+{
+  "question": "Which of the following occurs during the light reaction of photosynthesis?",
+  "options": ["Glucose is produced", "Oxygen is released", "Carbon dioxide is absorbed", "Water is synthesized"],
+  "correctAnswer": 1
+},
+{
+  "question": "What is the main function of the large intestine?",
+  "options": ["Absorption of nutrients", "Absorption of water and salts", "Digestion of proteins", "Secretion of digestive enzymes"],
+  "correctAnswer": 1
+},
+{
+  "question": "Which type of immunity is acquired through vaccination?",
+  "options": ["Innate immunity", "Active immunity", "Passive immunity", "Cell-mediated immunity"],
+  "correctAnswer": 1
+},
+{
+  "question": "Which enzyme is responsible for breaking down starch into sugar?",
+  "options": ["Pepsin", "Amylase", "Lipase", "Trypsin"],
+  "correctAnswer": 1
+},
+{
+  "question": "Which of the following is the correct sequence of events in the cell cycle?",
+  "options": ["G1 → S → G2 → M", "S → G1 → G2 → M", "M → G1 → S → G2", "G2 → S → G1 → M"],
+  "correctAnswer": 0
+},
+{
+  "question": "Which hormone is secreted by the pancreas to reduce blood sugar levels?",
+  "options": ["Insulin", "Glucagon", "Adrenaline", "Cortisol"],
+  "correctAnswer": 0
+},
+{
+  "question": "Which of the following is a function of the liver?",
+  "options": ["Storage of glycogen", "Production of insulin", "Production of bile", "All of the above"],
+  "correctAnswer": 3
 }
 ];
 
