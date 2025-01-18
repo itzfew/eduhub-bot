@@ -21,15 +21,22 @@ const poll = () => async (ctx: Context) => {
         const question = "What is your favorite color?";
         const options = ["Red", "Blue", "Green", "Yellow"];
 
-        try {
-          // Send poll to the user
-          await ctx.telegram.sendPoll(ctx.chat?.id, question, options, {
-            is_anonymous: true,
-            allows_multiple_answers: false,
-          });
-        } catch (error) {
-          debug('Error sending poll:', error);
-          await ctx.reply('Something went wrong while sending the poll.');
+        // Ensure the chat_id is valid before sending the poll
+        const chatId = ctx.chat?.id;
+
+        if (chatId !== undefined) {
+          try {
+            // Send poll to the user
+            await ctx.telegram.sendPoll(chatId, question, options, {
+              is_anonymous: true,
+              allows_multiple_answers: false,
+            });
+          } catch (error) {
+            debug('Error sending poll:', error);
+            await ctx.reply('Something went wrong while sending the poll.');
+          }
+        } else {
+          await ctx.reply('Chat ID is not valid. Please try again later.');
         }
       } else if (userMessage.includes('poll')) {
         await ctx.reply(`Hey ${userName}, I can help you create a poll. Type /startpoll to begin!`);
