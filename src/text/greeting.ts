@@ -26,6 +26,20 @@ const greeting = () => async (ctx: Context) => {
         await ctx.reply(`You're welcome, ${userName}! Let me know if you need further assistance.`);
       } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
         await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
+      } else if (userMessage.includes('date')) {
+        const currentDate = new Date().toLocaleDateString();
+        await ctx.reply(`Today's date is: ${currentDate}`);
+      } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
+        await ctx.reply(`Eduhub Available Commands:
+
+1. /help - Get information about bot commands
+2. /about - Learn more about this bot
+3. /groups - Get a list of study groups
+4. /neet - Access resources for NEET
+5. /jee - Access resources for JEE
+6. /study - Get study materials for various subjects
+7. /pyq - View previous year's questions
+8. /exam - Access exam resources`);
       }
       // Removed the "I don't understand" response
     } else {
