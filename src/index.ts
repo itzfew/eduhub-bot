@@ -8,10 +8,10 @@ import { jee } from './commands/jee';
 import { quizes } from './commands/quizes';
 import { groups } from './commands/groups';
 import { list } from './commands/list';
-import { calculator } from './text';  // Import the calculator
 
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
+import { calculator } from './text/calculator'; // Importing calculator.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -29,15 +29,17 @@ bot.command('jee', jee());
 bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
-bot.command('calculator', calculator());  // Register the calculator
 
-// Message handling (including greeting and special keyword responses)
+// Message handling (including greeting, calculator, and pyq handlers)
 bot.on('message', async (ctx) => {
   // Call the greeting handler
   await greeting()(ctx);
   
   // Call the pyq handler
   await pyq()(ctx); // Added pyq handler
+
+  // Call the calculator handler
+  await calculator()(ctx); // Added calculator handler
 });
 
 // Production mode (Vercel)
