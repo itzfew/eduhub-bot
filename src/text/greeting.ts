@@ -1150,7 +1150,7 @@ const quizData = [
         "papers": [
             {
                 "metaId": "de89a0f9-dd5c-52ef-8a2e-c9700c6228b9",
-                "exam": "jee-main6",
+                "exam": "jee-main7",
                 "examGroup": "jee",
                 "title": "JEE Main 2017 (Online) 9th April Morning Slot",
                 "year": 2017
