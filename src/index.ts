@@ -12,7 +12,7 @@ import { list } from './commands/list';
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
 import { calculator } from './text'; // Importing calculator.ts
-import { timer } from './text'; // Importing timer.ts
+import { json } from './text'; // Importing json.ts
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -30,7 +30,7 @@ bot.command('jee', jee());
 bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
-bot.command('timer', timer()); // Registering the timer command
+bot.command('json', json()); // Registering the json command
 
 // Message handling (including greeting, calculator, and pyq handlers)
 bot.on('message', async (ctx) => {
