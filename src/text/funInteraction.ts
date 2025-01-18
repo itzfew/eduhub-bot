@@ -14,20 +14,18 @@ const funInteraction = () => async (ctx: Context) => {
   // Get the message text or handle non-text messages
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
-  if (messageId) {
-    if (userMessage) {
-      // Process text messages only
-      if (userMessage === '/joke') {
-        // Fetch a random joke
-        const response = await fetch('https://official-joke-api.appspot.com/random_joke');
-        const jokeData = await response.json();
-        await ctx.reply(`${jokeData.setup} - ${jokeData.punchline}`);
-      }
-      // If the message is not recognized, do nothing (no reply)
-    } else {
-      // Handle non-text messages (e.g., media)
-      // If the message is not text, do nothing (no reply)
-    }
+  if (messageId && userMessage) {
+    // Check if the message contains the word "joke"
+    if (userMessage.includes('joke')) {
+      // Fetch a random joke
+      const response = await fetch('https://official-joke-api.appspot.com/random_joke');
+      const jokeData = await response.json();
+      await ctx.reply(`${jokeData.setup} - ${jokeData.punchline}`);
+    } 
+    // If the message is not recognized, do nothing (no reply)
+  } else {
+    // Handle non-text messages (e.g., media)
+    // If the message is not text, do nothing (no reply)
   }
 };
 
