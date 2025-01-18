@@ -48,8 +48,8 @@ const poll = () => async (ctx: Context) => {
                   allows_multiple_answers: false,
                 });
 
-                // Handle the user's answer
-                ctx.telegram.on('poll_answer', async (answerCtx) => {
+                // Wait for a response on the poll (no need to use 'on')
+                ctx.on('poll_answer', async (answerCtx) => {
                   const userAnswer = answerCtx.poll_answer.option_ids;
                   const selectedOption = options[userAnswer[0]];
 
