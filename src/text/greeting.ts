@@ -1312,8 +1312,10 @@ const quizData = [
                 "name": "AIEEE 2002",
                 "year": 2002,
                 "title": "AIEEE 2002"
-            }
-        ],
+            },
+            ],
+        "yearwise": null
+    },
         "yearwise": [
             [
                 "2024",
