@@ -3,7 +3,7 @@ import createDebug from 'debug';
 
 const debug = createDebug('bot:poll');
 
-// Main poll function
+// Main poll function (quiz format)
 const poll = () => async (ctx: Context) => {
   debug('Triggered "poll" command');
 
@@ -18,8 +18,9 @@ const poll = () => async (ctx: Context) => {
       // Process text messages only
       if (userMessage === '/startpoll') {
         // Poll question and options
-        const question = "What is your favorite color?";
-        const options = ["Red", "Blue", "Green", "Yellow"];
+        const question = "What is 2 + 2?";
+        const options = ["3", "4", "5", "6"];
+        const correctAnswer = "4"; // Correct answer for the quiz
 
         // Ensure the chat_id is valid before sending the poll
         const chatId = ctx.chat?.id;
@@ -27,10 +28,24 @@ const poll = () => async (ctx: Context) => {
         if (chatId !== undefined) {
           try {
             // Send poll to the user
-            await ctx.telegram.sendPoll(chatId, question, options, {
-              is_anonymous: true,
+            const pollMessage = await ctx.telegram.sendPoll(chatId, question, options, {
+              is_anonymous: false, // The user's choice will be visible for feedback
               allows_multiple_answers: false,
             });
+
+            // Handle user response to the poll
+            ctx.telegram.on('poll_answer', async (answerCtx) => {
+              const userAnswer = answerCtx.poll_answer.option_ids;
+              const selectedOption = options[userAnswer[0]]; // Only one answer allowed
+
+              // Provide feedback based on the selected answer
+              if (selectedOption === correctAnswer) {
+                await ctx.reply(`${userName}, your answer is correct! 🎉`);
+              } else {
+                await ctx.reply(`${userName}, your answer is incorrect. Try again! ❌`);
+              }
+            });
+
           } catch (error) {
             debug('Error sending poll:', error);
             await ctx.reply('Something went wrong while sending the poll.');
@@ -39,7 +54,7 @@ const poll = () => async (ctx: Context) => {
           await ctx.reply('Chat ID is not valid. Please try again later.');
         }
       } else if (userMessage.includes('poll')) {
-        await ctx.reply(`Hey ${userName}, I can help you create a poll. Type /startpoll to begin!`);
+        await ctx.reply(`Hey ${userName}, I can help you create a quiz! Type /startpoll to begin!`);
       }
     } else {
       // Handle non-text messages (e.g., media)
