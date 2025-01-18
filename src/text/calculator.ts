@@ -20,30 +20,46 @@ const calculator = () => async (ctx: Context) => {
     }
   };
 
+  // Helper to standardize expressions
+  const standardizeExpression = (message: string): string => {
+    return message
+      .replace(/plus|add|addition/g, '+')
+      .replace(/minus|subtract|subtraction/g, '-')
+      .replace(/times|multiply|multiplication|×/g, '*')
+      .replace(/divided by|divide|division|÷/g, '/')
+      .replace(/\s+/g, ''); // Remove unnecessary spaces
+  };
+
   if (userMessage) {
-    if (userMessage.startsWith('/add')) {
-      const expression = userMessage.replace('/add', '').trim();
+    if (userMessage.startsWith('/add') || userMessage.includes('plus') || userMessage.includes('add')) {
+      const expression = standardizeExpression(userMessage.replace('/add', '').trim());
       const result = parseMathExpression(expression);
       await ctx.reply(`The result of addition is: ${result}`);
-    } else if (userMessage.startsWith('/subtract')) {
-      const expression = userMessage.replace('/subtract', '').trim();
+    } else if (userMessage.startsWith('/subtract') || userMessage.includes('minus') || userMessage.includes('subtract')) {
+      const expression = standardizeExpression(userMessage.replace('/subtract', '').trim());
       const result = parseMathExpression(expression);
       await ctx.reply(`The result of subtraction is: ${result}`);
-    } else if (userMessage.startsWith('/multiply')) {
-      const expression = userMessage.replace('/multiply', '').trim();
+    } else if (userMessage.startsWith('/multiply') || userMessage.includes('times') || userMessage.includes('multiply')) {
+      const expression = standardizeExpression(userMessage.replace('/multiply', '').trim());
       const result = parseMathExpression(expression);
       await ctx.reply(`The result of multiplication is: ${result}`);
-    } else if (userMessage.startsWith('/divide')) {
-      const expression = userMessage.replace('/divide', '').trim();
+    } else if (userMessage.startsWith('/divide') || userMessage.includes('divided by') || userMessage.includes('divide')) {
+      const expression = standardizeExpression(userMessage.replace('/divide', '').trim());
       const result = parseMathExpression(expression);
       await ctx.reply(`The result of division is: ${result}`);
     } else if (userMessage.includes('/commands')) {
       await ctx.reply(`Calculator Bot Commands:
       
-1. /add <expression> - Add numbers (e.g., /add 2+3)
-2. /subtract <expression> - Subtract numbers (e.g., /subtract 5-2)
-3. /multiply <expression> - Multiply numbers (e.g., /multiply 3*4)
-4. /divide <expression> - Divide numbers (e.g., /divide 8/2)`);
+1. /add <expression> - Add numbers (e.g., /add 2+3, 2 plus 3)
+2. /subtract <expression> - Subtract numbers (e.g., /subtract 5-2, 5 minus 2)
+3. /multiply <expression> - Multiply numbers (e.g., /multiply 3*4, 3 times 4)
+4. /divide <expression> - Divide numbers (e.g., /divide 8/2, 8 divided by 2)
+
+You can also type expressions directly using words or symbols like:
+- "2 plus 2" or "2 + 2"
+- "6 divided by 3" or "6 / 3"
+- "4 times 5" or "4 * 5"
+- "7 minus 2" or "7 - 2"`);
     } else {
       await ctx.reply(`I didn't understand that command, ${userName}. Use /commands to see what I can do.`);
     }
