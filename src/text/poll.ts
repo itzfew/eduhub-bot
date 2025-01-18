@@ -35,11 +35,17 @@ const poll = () => async (ctx: Context) => {
       if (userMessage.startsWith('/startpoll')) {
         const parts = userMessage.split(' ');
         const subject = parts[1]?.toLowerCase();
+        let intervalTime = 30000; // Default to 30 seconds
+
+        // Optional: Check if a custom interval is provided (e.g., /startpoll biology 60000 for 1 minute)
+        if (parts.length > 2 && !isNaN(Number(parts[2]))) {
+          intervalTime = Number(parts[2]);
+        }
 
         if (subject === 'biology') {
-          await sendQuizzes(ctx, biologyQuizzes);
+          await sendQuizzes(ctx, biologyQuizzes, intervalTime);
         } else if (subject === 'physics') {
-          await sendQuizzes(ctx, physicsQuizzes);
+          await sendQuizzes(ctx, physicsQuizzes, intervalTime);
         } else {
           await ctx.reply(`Sorry, I don't have quizzes for ${subject}. Try typing /startpoll biology or /startpoll physics.`);
         }
@@ -53,8 +59,8 @@ const poll = () => async (ctx: Context) => {
   }
 };
 
-// Function to send 10 random quizzes with a 30-second interval
-const sendQuizzes = async (ctx: Context, quizzes: { question: string, options: string[], correctAnswer: number }[]) => {
+// Function to send 10 random quizzes with a customizable interval
+const sendQuizzes = async (ctx: Context, quizzes: { question: string, options: string[], correctAnswer: number }[], intervalTime: number) => {
   const chatId = ctx.chat?.id;
 
   if (chatId !== undefined) {
@@ -79,7 +85,7 @@ const sendQuizzes = async (ctx: Context, quizzes: { question: string, options: s
           await ctx.reply('Something went wrong while sending the quiz.');
         }
       }
-    }, 30000); // Send a quiz every 30 seconds
+    }, intervalTime); // Use the user-defined interval time
   } else {
     await ctx.reply('Chat ID is not valid. Please try again later.');
   }
