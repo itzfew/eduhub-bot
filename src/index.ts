@@ -8,7 +8,7 @@ import { jee } from './commands/jee';
 import { quizes } from './commands/quizes';
 import { groups } from './commands/groups';
 import { list } from './commands/list';
-import { groupCommands } from './text';  // Import the group commands
+import { calculator } from './text';  // Import the calculator
 
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
@@ -29,7 +29,7 @@ bot.command('jee', jee());
 bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
-bot.command('group_commands', groupCommands());  // Register the group commands
+bot.command('calculator', calculator());  // Register the calculator
 
 // Message handling (including greeting and special keyword responses)
 bot.on('message', async (ctx) => {
