@@ -15,6 +15,8 @@ import { calculator } from './text'; // Importing calculator.ts
 import { funInteraction } from './text'; // Importing funInteraction.ts
 import { poll } from './text'; // Importing poll.ts
 
+import { location } from './functions/location'; // Import the location.ts file
+
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -36,6 +38,9 @@ bot.command('list', list());
 // Register the poll command
 bot.command('poll', poll());
 
+// Register the location command
+bot.command('location', location()); // Register location as a command
+
 // Message handling (including greeting, funInteraction, calculator, pyq, and poll handlers)
 bot.on('message', async (ctx) => {
   // Call the greeting handler
@@ -51,7 +56,10 @@ bot.on('message', async (ctx) => {
   await calculator()(ctx);
 
   // Call the poll handler if there's a poll-related message
-  await poll()(ctx);  // Added poll handler
+  await poll()(ctx);
+
+  // Call the location handler if there's a message about location
+  await location()(ctx);  // Added location handler
 });
 
 // Production mode (Vercel)
