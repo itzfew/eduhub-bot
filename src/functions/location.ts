@@ -1,11 +1,11 @@
-// location.ts
+// src/functions/location.ts
 import { Context } from 'telegraf';
 import createDebug from 'debug';
 
 const debug = createDebug('bot:location');
 
 // Main location function
-const location = () => async (ctx: Context) => {
+export const location = () => async (ctx: Context) => {
   debug('Triggered "location" function');
 
   const messageId = ctx.message?.message_id;
@@ -18,7 +18,7 @@ const location = () => async (ctx: Context) => {
     // Check if the message contains the word "location"
     if (userMessage.includes('location')) {
       // Check if the user has shared their location
-      if (ctx.message.location) {
+      if ('location' in ctx.message) {
         const { latitude, longitude } = ctx.message.location;
         await ctx.reply(`Your current location is: Latitude: ${latitude}, Longitude: ${longitude}`);
       } else {
@@ -30,5 +30,3 @@ const location = () => async (ctx: Context) => {
     // If the message is not text, do nothing (no reply)
   }
 };
-
-export { location };
