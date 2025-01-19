@@ -28,7 +28,7 @@ export const location = () => async (ctx: Context) => {
     }
   } else {
     // Handle non-text messages (e.g., media)
-    if (ctx.message.location) {
+    if ('location' in ctx.message) {
       const { latitude, longitude } = ctx.message.location;
       await ctx.reply(`Your current location is: Latitude: ${latitude}, Longitude: ${longitude}`);
     }
