@@ -18,15 +18,19 @@ export const location = () => async (ctx: Context) => {
     // Check if the message contains the word "location"
     if (userMessage.includes('location')) {
       // Check if the user has shared their location
-      if ('location' in ctx.message) {
+      if (ctx.message.location) {
         const { latitude, longitude } = ctx.message.location;
         await ctx.reply(`Your current location is: Latitude: ${latitude}, Longitude: ${longitude}`);
       } else {
-        await ctx.reply('Please share your location so I can retrieve it.');
+        // Ask the user to share their location if not already done
+        await ctx.reply('Please share your location so I can retrieve it. Tap the location button below.');
       }
     }
   } else {
     // Handle non-text messages (e.g., media)
-    // If the message is not text, do nothing (no reply)
+    if (ctx.message.location) {
+      const { latitude, longitude } = ctx.message.location;
+      await ctx.reply(`Your current location is: Latitude: ${latitude}, Longitude: ${longitude}`);
+    }
   }
 };
