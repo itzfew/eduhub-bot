@@ -1,11 +1,12 @@
+// src/advanced/forwardMessage.ts
 import { Context } from 'telegraf';
 import createDebug from 'debug';
 
-const debug = createDebug('bot:forwarding');
+const debug = createDebug('bot:forwardMessage');
 
 // Forwarding function
 const forwardMessage = () => async (ctx: Context) => {
-  debug('Triggered "forwarding" command');
+  debug('Triggered "forwardMessage" command');
 
   // Check if ctx.chat exists before using it
   const chatId = ctx.chat?.id;
