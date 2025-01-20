@@ -1,9 +1,9 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
-import { study } from './commands/study';
-import { about } from './commands/about';
-import { help } from './commands/help';
-import { list } from './commands/list';
+import { study } from './commands';
+import { about } from './commands';
+import { help } from './commands';
+import { list } from './commands';
 
 const debug = createDebug('bot:greeting_text');
 
@@ -34,8 +34,9 @@ Hey ${userName}, how may I assist you today? Choose an option below:
       } else if (userMessage === '/1') {
         await ctx.reply(`You selected **Previous Year's Questions (PyQs)**. Please select the following command:
 
-- /pyq for NEET PyQs
-- /exam for JEE PyQs`);
+- /pyq 
+OR
+- /exam for NEET and JEE PyQs`);
       } else if (userMessage === '/2') {
         // Dispatch the study command from the src/commands/study.ts
         study(ctx);
