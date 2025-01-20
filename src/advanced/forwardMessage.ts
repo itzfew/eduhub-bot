@@ -19,35 +19,38 @@ const forwardMessage = () => async (ctx: Context) => {
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
   if (messageId && userMessage) {
-    // Mapping of resource names to message IDs in the order 1, 2, 3, 4, etc.
-    const resourceMap: { [key: string]: number } = {
-      'med easy physics': 1,       // Med Easy Physics
-      'akash test series 2024': 2, // Akash Test Series 2024
-      'akash modules 2024': 3,     // Akash Modules 2024
-      'allen modules': 4,          // Allen Modules
-      'allen test 2024': 5,        // Allen Test 2024
-      'botany med easy': 6,        // Botany Med Easy
-      'zoology med easy': 7,       // Zoology Med Easy
-      'chemistry know your ncert': 8, // Chemistry - Know Your NCERT
-      'physics know your ncert': 9, // Physics - Know Your NCERT
-      'biology punch': 10,         // Biology Punch
-      'chemistry punch': 11,       // Chemistry Punch
-      'physics punch': 12,         // Physics Punch
-      'biohack 4th edition': 13,   // Biohack 4th Edition by Parth Goyal
-      'neet 11 years chapterwise pyq': 14, // NEET 11 Years Chapterwise PYQ
-      'nta neet speed test': 15,   // NTA NEET Speed Test
-      'ncert diagrams all-in-one': 16 // NCERT Diagrams All-in-One
+    // Mapping of resource names to message ID ranges
+    const resourceMap: { [key: string]: number[] } = {
+      'med easy physics': [1],         // Med Easy Physics (Message ID 1)
+      'akash test series 2024': [2, 3], // Akash Test Series 2024 (Message IDs 2, 3)
+      'akash modules 2024': [4],       // Akash Modules 2024 (Message ID 4)
+      'allen modules': [5],            // Allen Modules (Message ID 5)
+      'allen test 2024': [6],          // Allen Test 2024 (Message ID 6)
+      'botany med easy': [7],          // Botany Med Easy (Message ID 7)
+      'zoology med easy': [8],         // Zoology Med Easy (Message ID 8)
+      'chemistry know your ncert': [9], // Chemistry - Know Your NCERT (Message ID 9)
+      'physics know your ncert': [10], // Physics - Know Your NCERT (Message ID 10)
+      'biology punch': [11],           // Biology Punch (Message ID 11)
+      'chemistry punch': [12],         // Chemistry Punch (Message ID 12)
+      'physics punch': [13],           // Physics Punch (Message ID 13)
+      'biohack 4th edition': [14],     // Biohack 4th Edition by Parth Goyal (Message ID 14)
+      'neet 11 years chapterwise pyq': [15], // NEET 11 Years Chapterwise PYQ (Message ID 15)
+      'nta neet speed test': [16],     // NTA NEET Speed Test (Message ID 16)
+      'ncert diagrams all-in-one': [17] // NCERT Diagrams All-in-One (Message ID 17)
     };
 
     // Check if user message matches any of the keys in resourceMap
     const resourceMatch = Object.keys(resourceMap).find(key => userMessage.includes(key));
 
     if (resourceMatch) {
-      const messageIdToForward = resourceMap[resourceMatch];
+      const messageIdsToForward = resourceMap[resourceMatch];  // Get the array of message IDs
       const channelId = '@eduhub2025'; // Channel ID
 
-      // Forward the message corresponding to the resource (in the order 1, 2, 3, etc.)
-      await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
+      // Forward each message in the range associated with the resource
+      for (const messageIdToForward of messageIdsToForward) {
+        await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
+        debug(`Forwarded message ${messageIdToForward} for resource: ${resourceMatch}`);
+      }
     }
   }
 };
