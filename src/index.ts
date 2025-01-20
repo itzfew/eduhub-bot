@@ -1,4 +1,5 @@
 import { Telegraf } from 'telegraf';
+
 import { about } from './commands';
 import { help } from './commands';
 import { study } from './commands/study';
@@ -9,6 +10,12 @@ import { groups } from './commands/groups';
 import { list } from './commands/list';
 
 import { greeting, handleCallback } from './text';  // Importing greeting and handleCallback
+import { pyq } from './text'; // Importing pyq.ts
+import { calculator } from './text'; // Importing calculator.ts
+import { funInteraction } from './text'; // Importing funInteraction.ts
+import { poll } from './text'; // Importing poll.ts
+
+import { forwardMessage } from './advanced/forwardMessage'; // Importing forwardMessage.ts
 
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
@@ -35,10 +42,25 @@ bot.command('poll', poll());
 bot.on('message', async (ctx) => {
   // Call the greeting handler
   await greeting()(ctx);
+
+  // Call the funInteraction handler
+  await funInteraction()(ctx);
+
+  // Call the pyq handler
+  await pyq()(ctx);
+
+  // Call the calculator handler
+  await calculator()(ctx);
+
+  // Call the poll handler if there's a poll-related message
+  await poll()(ctx);
+
+  // Call the forwardMessage handler if the message contains "syllabus"
+  await forwardMessage()(ctx);
 });
 
 // Handle callback queries (button clicks)
-bot.on('callback_query', handleCallback());
+bot.on('callback_query', handleCallback());  // Added callback query handler
 
 // Production mode (Vercel)
 export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
