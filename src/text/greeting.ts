@@ -1,57 +1,46 @@
-import { Context } from 'telegraf';
+import { Telegraf, Context } from 'telegraf';
+import dotenv from 'dotenv';
 import createDebug from 'debug';
+
+dotenv.config();
 
 const debug = createDebug('bot:greeting_text');
 
-// Define your channel ID (e.g., "@eduhub2025" or a numeric ID)
-const CHANNEL_ID = '@eduhub2025';
+// Initialize bot
+const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
-// Helper function to find and forward messages
-const findAndForwardMessage = async (ctx: Context, keyword: string) => {
-  try {
-    // Fetch messages from the channel
-    const messages = await ctx.telegram.getChat(CHANNEL_ID);
+// Store messages for search
+const channelMessages: string[] = [];
 
-    // Find a message containing the keyword
-    const matchingMessage = messages.messages?.find((msg) => 
-      'text' in msg && msg.text.toLowerCase().includes(keyword)
-    );
-
-    if (matchingMessage) {
-      // Forward the found message to the user
-      await ctx.telegram.forwardMessage(
-        ctx.chat?.id!, // User's chat ID
-        CHANNEL_ID, // From the channel
-        matchingMessage.message_id // Message ID to forward
-      );
-    } else {
-      await ctx.reply(`Sorry, I couldn't find any message containing the keyword "${keyword}".`);
-    }
-  } catch (error) {
-    debug('Error in findAndForwardMessage:', error);
-    await ctx.reply('An error occurred while searching for messages. Please try again later.');
+// Listen for new channel posts and store them
+bot.on('channel_post', (ctx) => {
+  const text = ctx.channelPost?.text;
+  if (text) {
+    channelMessages.push(text);
+    debug(`Stored message: "${text}"`);
   }
-};
+});
 
-// Main function to handle commands
-const greeting = () => async (ctx: Context) => {
-  debug('Triggered "greeting" command');
-  
-  const messageId = ctx.message?.message_id;
-  const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
+// Command to search and forward messages
+bot.command('syllabus', async (ctx: Context) => {
+  const keyword = ctx.message?.text?.split(' ').slice(1).join(' ');
+  if (!keyword) {
+    return ctx.reply('Please provide a keyword to search for.');
+  }
 
-  if (messageId && userMessage) {
-    // Extract keywords to search in the channel
-    const keywords = userMessage.split(' ').slice(1).join(' '); // Assuming "/command keyword"
-    
-    if (userMessage.startsWith('/syllabus')) {
-      await findAndForwardMessage(ctx, keywords || 'syllabus');
-    } else {
-      await ctx.reply('Invalid command. Please use a valid keyword.');
-    }
+  debug(`Searching for keyword: "${keyword}"`);
+  const foundMessage = channelMessages.find((msg) =>
+    msg.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  if (foundMessage) {
+    await ctx.reply(foundMessage);
   } else {
-    await ctx.reply('I can only respond to text commands. Please send a valid message.');
+    await ctx.reply(`No message found containing the keyword: "${keyword}"`);
   }
-};
+});
 
-export { greeting };
+// Launch the bot
+bot.launch().then(() => {
+  console.log('Bot is running!');
+});
