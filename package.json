@@ -1,7 +1,7 @@
 {
   "name": "Eduhub",
-  "version": "1.1.0",
-  "description": "Telegram Bot EduHub",
+  "version": "1.1.1",
+  "description": "EduHub Telegram Bot with modern TypeScript and Node.js features.",
   "main": "src/index.ts",
   "author": "itzfew (https://t.me/itzfew)",
   "homepage": "https://github.com/itzfew/eduhub-bot",
@@ -15,17 +15,21 @@
     "@types/node": "^22.8.6",
     "@vercel/ncc": "^0.38.2",
     "debug": "^4.3.7",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
   "scripts": {
-      "start": "tsc && node dist/bot.js",
+    "start": "node public/index.js",
     "dev": "DEBUG=bot* dotenv -- nodemon -e ts -x ts-node src/index.ts",
-    "devWindows": "@powershell -Command $env:DEBUG='bot*';dotenv -- -- nodemon -e ts -x ts-node src/index.ts",
-    "build": "ncc build src/index.ts -o public -m",
-    "prettier": "prettier --write 'src/**/*.ts'",
-    "lint": "tsc --noemit"
+    "devWindows": "@powershell -Command $env:DEBUG='bot*'; dotenv -- nodemon -e ts -x ts-node src/index.ts",
+    "build": "yarn clean && ncc build src/index.ts -o public -m",
+    "clean": "rm -rf public",
+    "lint": "tsc --noemit",
+    "lint:fix": "eslint --fix 'src/**/*.ts'",
+    "prettier": "prettier --write 'src/**/*.ts'"
   }
 }
