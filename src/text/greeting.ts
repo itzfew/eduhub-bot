@@ -52,7 +52,6 @@ const greeting = () => async (ctx: Context) => {
 8. /cal - Calculator
 9. /exam - Access exam resources`);
       }
-      // Removed the "I don't understand" response
     } else {
       // Handle non-text messages (e.g., media)
       await ctx.reply(`I can only respond to text messages. Please send a text command.`);
@@ -65,21 +64,24 @@ const handleCallback = () => async (ctx: Context) => {
   const callbackData = ctx.callbackQuery?.data;
 
   if (callbackData) {
-    // Respond to button clicks
-    if (callbackData === 'pyqs') {
-      await ctx.reply(`Please select the following command (e.g., /pyq or /exam) for NEET and JEE pyqs.`);
-    } else if (callbackData === 'study_material') {
-      // Trigger the /study command
-      await ctx.reply('Please use the /study command to access study materials.');
-    } else if (callbackData === 'commands') {
-      // Trigger the /commands list
-      await ctx.reply('Here are the available commands: /about, /help, /study, /neet, /jee');
-    } else if (callbackData === 'about') {
-      // Trigger the /about command
-      await ctx.reply('This bot helps you with NEET, JEE, and other study materials. It also provides quick access to previous years’ questions, calculators, and more.');
-    } else if (callbackData === 'help') {
-      // Trigger the /help command
-      await ctx.reply('Here is the help section. You can use these commands: /about, /help, /study, /pyq, /exam.');
+    switch (callbackData) {
+      case 'pyqs':
+        await ctx.reply(`Please select the following command (e.g., /pyq or /exam) for NEET and JEE PyQs.`);
+        break;
+      case 'study_material':
+        await ctx.reply('To access study materials, use the /study command.');
+        break;
+      case 'commands':
+        await ctx.reply('Here are the available commands: /about, /help, /study, /neet, /jee');
+        break;
+      case 'about':
+        await ctx.reply('This bot helps you with NEET, JEE, and other study materials. It also provides quick access to previous years’ questions, calculators, and more.');
+        break;
+      case 'help':
+        await ctx.reply('Here is the help section. You can use these commands: /about, /help, /study, /pyq, /exam.');
+        break;
+      default:
+        await ctx.reply(`Sorry, I don't recognize this option.`);
     }
 
     // Acknowledge the callback to remove the button (optional)
