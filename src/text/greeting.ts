@@ -17,11 +17,12 @@ const greeting = () => async (ctx: Context) => {
   // Get the message text or handle non-text messages
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
-  if (messageId) {
-    if (userMessage) {
-      // Process text messages only
-      if (userMessage === '/start') {
-        // Main menu options
+  if (!messageId) return;
+
+  if (userMessage) {
+    // Process text messages only
+    switch (userMessage) {
+      case '/start':
         await ctx.reply(`
 Hey ${userName}, how may I assist you today? Choose an option below:
 
@@ -31,37 +32,57 @@ Hey ${userName}, how may I assist you today? Choose an option below:
 - /4 About this bot and its features
 - /5 Help if you need assistance or have questions
         `);
-      } else if (userMessage === '/1') {
+        break;
+
+      case '/1':
         await ctx.reply(`You selected **Previous Year's Questions (PyQs)**. Please select the following command:
 
 - /pyq 
 OR
 - /exam for NEET and JEE PyQs`);
-      } else if (userMessage === '/2') {
-        // Dispatch the study command from the src/commands/study.ts
+        break;
+
+      case '/2':
         study(ctx);
-      } else if (userMessage === '/3') {
-        // Dispatch the list of available commands from src/commands/list.ts
+        break;
+
+      case '/3':
         list(ctx);
-      } else if (userMessage === '/4') {
-        // Dispatch the about command from src/commands/about.ts
+        break;
+
+      case '/4':
         about(ctx);
-      } else if (userMessage === '/5') {
-        // Dispatch the help command from src/commands/help.ts
+        break;
+
+      case '/5':
         help(ctx);
-      } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
-        await ctx.reply(`Hey ${userName}, how may I help you?`);
-      } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
-        await ctx.reply(`Goodbye ${userName}, take care!`);
-      } else if (userMessage.includes('thank') || userMessage.includes('thanks')) {
-        await ctx.reply(`You're welcome, ${userName}! Let me know if you need further assistance.`);
-      } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
-        await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
-      } else if (userMessage.includes('date')) {
-        const currentDate = new Date().toLocaleDateString();
-        await ctx.reply(`Today's date is: ${currentDate}`);
-      } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
-        await ctx.reply(`Eduhub Available Commands:
+        break;
+
+      default:
+        handleOtherMessages(userMessage, userName, ctx);
+        break;
+    }
+  } else {
+    // Handle non-text messages (e.g., media)
+    await ctx.reply(`I can only respond to text messages. Please send a text command.`);
+  }
+};
+
+// Helper function for handling other messages
+const handleOtherMessages = async (userMessage: string, userName: string, ctx: Context) => {
+  if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
+    await ctx.reply(`Hey ${userName}, how may I help you?`);
+  } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
+    await ctx.reply(`Goodbye ${userName}, take care!`);
+  } else if (userMessage.includes('thank') || userMessage.includes('thanks')) {
+    await ctx.reply(`You're welcome, ${userName}! Let me know if you need further assistance.`);
+  } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
+    await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
+  } else if (userMessage.includes('date')) {
+    const currentDate = new Date().toLocaleDateString();
+    await ctx.reply(`Today's date is: ${currentDate}`);
+  } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
+    await ctx.reply(`Eduhub Available Commands:
 
 - /help - Get information about bot commands
 - /about - Learn more about this bot
@@ -72,11 +93,6 @@ OR
 - /pyq - View previous year's questions
 - /cal - Calculator
 - /exam - Access exam resources`);
-      }
-    } else {
-      // Handle non-text messages (e.g., media)
-      await ctx.reply(`I can only respond to text messages. Please send a text command.`);
-    }
   }
 };
 
