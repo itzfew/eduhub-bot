@@ -1,9 +1,9 @@
-import { Context } from 'telegraf';
+i.mport { Context } from 'telegraf';
 import createDebug from 'debug';
-import { study } from './commands';
-import { about } from './commands';
-import { help } from './commands';
-import { list } from './commands';
+import { study } from '../commands/study';
+import { about } from '../commands/about';
+import { help } from '../commands/help';
+import { list } from '../commands/list';
 
 const debug = createDebug('bot:greeting_text');
 
