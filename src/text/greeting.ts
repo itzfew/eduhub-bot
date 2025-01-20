@@ -3,50 +3,54 @@ import createDebug from 'debug';
 
 const debug = createDebug('bot:greeting_text');
 
-// Main greeting function
+// Define your channel ID (e.g., "@eduhub2025" or a numeric ID)
+const CHANNEL_ID = '@eduhub2025';
+
+// Helper function to find and forward messages
+const findAndForwardMessage = async (ctx: Context, keyword: string) => {
+  try {
+    // Fetch messages from the channel
+    const messages = await ctx.telegram.getChat(CHANNEL_ID);
+
+    // Find a message containing the keyword
+    const matchingMessage = messages.messages?.find((msg) => 
+      'text' in msg && msg.text.toLowerCase().includes(keyword)
+    );
+
+    if (matchingMessage) {
+      // Forward the found message to the user
+      await ctx.telegram.forwardMessage(
+        ctx.chat?.id!, // User's chat ID
+        CHANNEL_ID, // From the channel
+        matchingMessage.message_id // Message ID to forward
+      );
+    } else {
+      await ctx.reply(`Sorry, I couldn't find any message containing the keyword "${keyword}".`);
+    }
+  } catch (error) {
+    debug('Error in findAndForwardMessage:', error);
+    await ctx.reply('An error occurred while searching for messages. Please try again later.');
+  }
+};
+
+// Main function to handle commands
 const greeting = () => async (ctx: Context) => {
-  debug('Triggered "greeting" text command');
-
+  debug('Triggered "greeting" command');
+  
   const messageId = ctx.message?.message_id;
-  const userName = `${ctx.message?.from.first_name}`;
-
-  // Get the message text or handle non-text messages
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
-  if (messageId) {
-    if (userMessage) {
-      // Process text messages only
-      if (userMessage === '/start') {
-        await ctx.reply(`Hey ${userName}, how may I help you?`);
-      } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
-        await ctx.reply(`Hey ${userName}, how may I help you?`);
-      } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
-        await ctx.reply(`Goodbye ${userName}, take care!`);
-      } else if (userMessage.includes('thank') || userMessage.includes('thanks')) {
-        await ctx.reply(`You're welcome, ${userName}! Let me know if you need further assistance.`);
-      } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
-        await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
-      } else if (userMessage.includes('date')) {
-        const currentDate = new Date().toLocaleDateString();
-        await ctx.reply(`Today's date is: ${currentDate}`);
-      } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
-        await ctx.reply(`Eduhub Available Commands:
-
-1. /help - Get information about bot commands
-2. /about - Learn more about this bot
-3. /groups - Get a list of study groups
-4. /neet - Access resources for NEET
-5. /jee - Access resources for JEE
-6. /study - Get study materials for various subjects
-7. /pyq - View previous year's questions
-8. /cal - calculator
-9. /exam - Access exam resources`);
-      }
-      // Removed the "I don't understand" response
+  if (messageId && userMessage) {
+    // Extract keywords to search in the channel
+    const keywords = userMessage.split(' ').slice(1).join(' '); // Assuming "/command keyword"
+    
+    if (userMessage.startsWith('/syllabus')) {
+      await findAndForwardMessage(ctx, keywords || 'syllabus');
     } else {
-      // Handle non-text messages (e.g., media)
-      await ctx.reply(`I can only respond to text messages. Please send a text command.`);
+      await ctx.reply('Invalid command. Please use a valid keyword.');
     }
+  } else {
+    await ctx.reply('I can only respond to text commands. Please send a valid message.');
   }
 };
 
