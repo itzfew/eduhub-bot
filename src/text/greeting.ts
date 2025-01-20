@@ -17,6 +17,14 @@ const getRandomGreeting = (userName: string) => {
   return greetings[Math.floor(Math.random() * greetings.length)];
 };
 
+// Helper function for formatting the date to dd/mm/yyyy
+const formatDate = (date: Date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 // Main greeting function
 const greeting = () => async (ctx: Context) => {
   debug('Triggered "greeting" text command');
@@ -33,18 +41,18 @@ const greeting = () => async (ctx: Context) => {
       if (userMessage === '/start') {
         // Send random greeting, list of commands, and current date
         const greetingMessage = getRandomGreeting(userName);
-        const currentDate = new Date().toLocaleDateString();
+        const currentDate = formatDate(new Date()); // Use the formatted date
         await ctx.reply(`${greetingMessage}\n\nEduhub Available Commands:
 
-1. /help - Get information about bot commands
-2. /about - Learn more about this bot
-3. /groups - Get a list of study groups
-4. /neet - Access resources for NEET
-5. /jee - Access resources for JEE
-6. /study - Get study materials for various subjects
-7. /pyq - View previous year's questions
-8. /cal - calculator
-9. /exam - Access exam resources
+/neet - Access resources for NEET
+/jee - Access resources for JEE
+/study - Get study materials for various subjects
+/pyq or /exam - View previous year's questions
+/help - Get help
+/about - Learn more about this bot
+/groups - Get a list of study groups
+/cal - Use the calculator
+/list - View more commands
 
 Today's date is: ${currentDate}`);
       } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
@@ -56,7 +64,7 @@ Today's date is: ${currentDate}`);
       } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
         await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
       } else if (userMessage.includes('date')) {
-        const currentDate = new Date().toLocaleDateString();
+        const currentDate = formatDate(new Date()); // Use the formatted date
         await ctx.reply(`Today's date is: ${currentDate}`);
       } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
         await ctx.reply(`Eduhub Available Commands:
