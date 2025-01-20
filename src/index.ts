@@ -15,6 +15,8 @@ import { calculator } from './text'; // Importing calculator.ts
 import { funInteraction } from './text'; // Importing funInteraction.ts
 import { poll } from './text'; // Importing poll.ts
 
+import { forwardMessage } from './advanced/forwardMessage'; // Importing forwardMessage.ts
+
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 
@@ -36,7 +38,7 @@ bot.command('list', list());
 // Register the poll command
 bot.command('poll', poll());
 
-// Message handling (including greeting, funInteraction, calculator, pyq, and poll handlers)
+// Message handling (including greeting, funInteraction, calculator, pyq, and forwardMessage handlers)
 bot.on('message', async (ctx) => {
   // Call the greeting handler
   await greeting()(ctx);
@@ -52,6 +54,9 @@ bot.on('message', async (ctx) => {
 
   // Call the poll handler if there's a poll-related message
   await poll()(ctx);
+
+  // Call the forwardMessage handler if the message contains "syllabus"
+  await forwardMessage()(ctx);
 });
 
 // Production mode (Vercel)
