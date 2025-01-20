@@ -39,8 +39,10 @@ const forwardMessage = () => async (ctx: Context) => {
       'ncert diagrams all-in-one': [17] // NCERT Diagrams All-in-One (Message ID 17)
     };
 
-    // Check if user message matches any of the keys in resourceMap
-    const resourceMatch = Object.keys(resourceMap).find(key => userMessage.includes(key));
+    // Check if user message matches any of the keys in resourceMap (using partial match)
+    const resourceMatch = Object.keys(resourceMap).find(key => {
+      return userMessage && userMessage.includes(key.toLowerCase());
+    });
 
     if (resourceMatch) {
       const messageIdsToForward = resourceMap[resourceMatch];  // Get the array of message IDs
@@ -48,8 +50,15 @@ const forwardMessage = () => async (ctx: Context) => {
 
       // Forward each message in the range associated with the resource
       for (const messageIdToForward of messageIdsToForward) {
-        await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
-        debug(`Forwarded message ${messageIdToForward} for resource: ${resourceMatch}`);
+        debug(`Attempting to forward message ID: ${messageIdToForward} for resource: ${resourceMatch}`);
+        
+        try {
+          // Forward the message from the channel to the chat
+          await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
+          debug(`Successfully forwarded message ID: ${messageIdToForward}`);
+        } catch (error) {
+          debug(`Failed to forward message ID: ${messageIdToForward} due to error: ${error}`);
+        }
       }
     }
   }
