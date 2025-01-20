@@ -27,7 +27,7 @@ const forwardMessage = () => async (ctx: Context) => {
       'allen modules': [5],            // Allen Modules (Message ID 5)
       'allen test 2024': [6],          // Allen Test 2024 (Message ID 6)
       'botany med easy': [7],          // Botany Med Easy (Message ID 7)
-      'zoology med easy': [8?single],         // Zoology Med Easy (Message ID 8)
+      'zoology med easy': [1,2,3,4,5,6,7,8],         // Zoology Med Easy (Message ID 8)
       'chemistry know your ncert': [9], // Chemistry - Know Your NCERT (Message ID 9)
       'physics know your ncert': [10], // Physics - Know Your NCERT (Message ID 10)
       'biology punch': [11],           // Biology Punch (Message ID 11)
