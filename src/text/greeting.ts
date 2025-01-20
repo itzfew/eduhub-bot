@@ -1,6 +1,5 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
-import { Markup } from 'telegraf';  // Importing Markup for creating buttons
 
 const debug = createDebug('bot:greeting_text');
 
@@ -18,16 +17,16 @@ const greeting = () => async (ctx: Context) => {
     if (userMessage) {
       // Process text messages only
       if (userMessage === '/start') {
-        // Sending a menu when /start is triggered
-        await ctx.reply(`Hey ${userName}, how may I help you? Choose an option below:`, 
-          Markup.inlineKeyboard([
-            Markup.button.callback('PyQs', 'pyqs'),
-            Markup.button.callback('Study Material', 'study_material'),
-            Markup.button.callback('Commands', 'commands'),
-            Markup.button.callback('About', 'about'),
-            Markup.button.callback('Help', 'help')
-          ]).extra()
-        );
+        // Replacing the menu with alternative phrasing
+        await ctx.reply(`
+Hey ${userName}, how may I assist you today? Choose an option below:
+
+- **Previous Year's Questions** (PyQs)
+- **Study Materials** for various subjects
+- **Commands** to learn more about available options
+- **About** this bot and its features
+- **Help** if you need assistance or have questions
+        `);
       } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
         await ctx.reply(`Hey ${userName}, how may I help you?`);
       } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
@@ -42,15 +41,15 @@ const greeting = () => async (ctx: Context) => {
       } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
         await ctx.reply(`Eduhub Available Commands:
 
-1. /help - Get information about bot commands
-2. /about - Learn more about this bot
-3. /groups - Get a list of study groups
-4. /neet - Access resources for NEET
-5. /jee - Access resources for JEE
-6. /study - Get study materials for various subjects
-7. /pyq - View previous year's questions
-8. /cal - Calculator
-9. /exam - Access exam resources`);
+- **/help** - Get information about bot commands
+- **/about** - Learn more about this bot
+- **/groups** - Get a list of study groups
+- **/neet** - Access resources for NEET
+- **/jee** - Access resources for JEE
+- **/study** - Get study materials for various subjects
+- **/pyq** - View previous year's questions
+- **/cal** - Calculator
+- **/exam** - Access exam resources`);
       }
     } else {
       // Handle non-text messages (e.g., media)
