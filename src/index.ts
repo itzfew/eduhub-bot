@@ -9,7 +9,7 @@ import { quizes } from './commands/quizes';
 import { groups } from './commands/groups';
 import { list } from './commands/list';
 
-import { greeting, handleCallback } from './text';  // Importing greeting and handleCallback
+import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
 import { calculator } from './text'; // Importing calculator.ts
 import { funInteraction } from './text'; // Importing funInteraction.ts
@@ -58,9 +58,6 @@ bot.on('message', async (ctx) => {
   // Call the forwardMessage handler if the message contains "syllabus"
   await forwardMessage()(ctx);
 });
-
-// Handle callback queries (button clicks)
-bot.on('callback_query', handleCallback());  // Added callback query handler
 
 // Production mode (Vercel)
 export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
