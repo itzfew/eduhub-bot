@@ -1,5 +1,9 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
+import { study } from './commands/study';
+import { about } from './commands/about';
+import { help } from './commands/help';
+import { list } from './commands/list';
 
 const debug = createDebug('bot:greeting_text');
 
@@ -17,7 +21,7 @@ const greeting = () => async (ctx: Context) => {
     if (userMessage) {
       // Process text messages only
       if (userMessage === '/start') {
-        // Replacing the menu with alternative phrasing, no bold text
+        // Main menu options
         await ctx.reply(`
 Hey ${userName}, how may I assist you today? Choose an option below:
 
@@ -28,24 +32,22 @@ Hey ${userName}, how may I assist you today? Choose an option below:
 - /5 Help if you need assistance or have questions
         `);
       } else if (userMessage === '/1') {
-        await ctx.reply(`You selected **Previous Year's Questions (PyQs)**. What would you like to know?`);
+        await ctx.reply(`You selected **Previous Year's Questions (PyQs)**. Please select the following command:
+
+- /pyq for NEET PyQs
+- /exam for JEE PyQs`);
       } else if (userMessage === '/2') {
-        await ctx.reply(`You selected **Study Materials**. Which subject are you interested in?`);
+        // Dispatch the study command from the src/commands/study.ts
+        study(ctx);
       } else if (userMessage === '/3') {
-        await ctx.reply(`You selected **Commands**. Here’s the list of available commands:
-- /help - Get information about bot commands
-- /about - Learn more about this bot
-- /groups - Get a list of study groups
-- /neet - Access resources for NEET
-- /jee - Access resources for JEE
-- /study - Get study materials for various subjects
-- /pyq - View previous year's questions
-- /cal - Calculator
-- /exam - Access exam resources`);
+        // Dispatch the list of available commands from src/commands/list.ts
+        list(ctx);
       } else if (userMessage === '/4') {
-        await ctx.reply(`You selected **About**. This bot helps you access study materials, previous year's questions, and more!`);
+        // Dispatch the about command from src/commands/about.ts
+        about(ctx);
       } else if (userMessage === '/5') {
-        await ctx.reply(`You selected **Help**. How can I assist you further?`);
+        // Dispatch the help command from src/commands/help.ts
+        help(ctx);
       } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
         await ctx.reply(`Hey ${userName}, how may I help you?`);
       } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
