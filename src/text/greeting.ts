@@ -1,40 +1,65 @@
-import { Context } from 'telegraf';
-import createDebug from 'debug';
+import { Telegraf, Context } from 'telegraf';
+import dotenv from 'dotenv';
 
-const debug = createDebug('bot:greeting');
-const CHANNEL_ID = '@eduhub2025'; // Replace with your channel username or numeric ID
+dotenv.config();
 
-const greeting = () => async (ctx: Context) => {
-  debug('Triggered "greeting" with keyword-based forwarding');
+// Initialize the bot with your token
+const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
-  const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
-  const userName = `${ctx.message?.from.first_name}`;
+// Function to get recent messages from the channel
+async function fetchChannelMessages() {
+  try {
+    // Fetch the last 10 messages from the channel (you can adjust the limit)
+    const messages = await bot.telegram.getChatHistory('@eduhub2025', {
+      limit: 10, // Number of messages to fetch, you can increase if necessary
+    });
 
-  if (ctx.chat?.id && userMessage) {
-    try {
-      const keyword = userMessage.trim();
-      if (keyword) {
-        debug(`Searching for keyword: "${keyword}" in channel: ${CHANNEL_ID}`);
-        
-        // Placeholder for your search logic
-        const matchingMessage = null; // You need to implement message search storage or API fetch
-        
-        if (matchingMessage) {
-          await ctx.telegram.forwardMessage(ctx.chat.id, CHANNEL_ID, matchingMessage.message_id);
-        } else {
-          await ctx.reply(`Sorry ${userName}, I couldn't find any message containing "${keyword}" in the channel.`);
-        }
-      } else {
-        await ctx.reply(`Hi ${userName}, please provide a valid keyword to search for messages.`);
-      }
-    } catch (error) {
-      const errMsg = error instanceof Error ? error.message : 'Unknown error';
-      debug(`Error occurred: ${errMsg}`);
-      await ctx.reply(`Oops! Something went wrong: ${errMsg}`);
-    }
-  } else {
-    await ctx.reply(`I can only process text messages. Please send a valid keyword.`);
+    return messages;
+  } catch (error) {
+    console.error('Error fetching channel messages:', error);
+    return [];
   }
-};
+}
 
-export { greeting };
+// Function to handle incoming messages from the user
+async function handleMessage(ctx: Context) {
+  try {
+    const userMessage = ctx.message?.text?.toLowerCase();
+
+    // If no message or invalid input, exit the function
+    if (!userMessage) return;
+
+    // Fetch recent messages from the channel
+    const messages = await fetchChannelMessages();
+
+    // Check if the user's message contains specific keywords
+    if (userMessage.includes('syllabus') || userMessage.includes('greeting')) {
+      // Search for a matching message in the channel messages
+      const matchingMessage = messages.find(msg =>
+        msg.text && msg.text.toLowerCase().includes(userMessage)
+      );
+
+      // If a matching message is found, forward it to the user
+      if (matchingMessage) {
+        await ctx.reply(`Found a message: ${matchingMessage.text}`);
+      } else {
+        await ctx.reply('No matching message found in the channel.');
+      }
+    } else {
+      // If no keywords are matched, send a generic reply
+      await ctx.reply(`You said: ${userMessage}`);
+    }
+  } catch (error) {
+    console.error('Error processing message:', error);
+    await ctx.reply('Sorry, there was an issue processing your request.');
+  }
+}
+
+// Set up the bot to listen for incoming messages
+bot.on('text', handleMessage);
+
+// Start the bot
+bot.launch().catch((error) => {
+  console.error('Error launching bot:', error);
+});
+
