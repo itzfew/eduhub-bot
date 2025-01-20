@@ -4,6 +4,13 @@ import createDebug from 'debug';
 
 const debug = createDebug('bot:forwardMessage');
 
+// Example dynamic content mapping (this could be a database or configuration in production)
+const keywordMappings = {
+  'syllabus': { channelId: '@eduhub2025', messageId: 3 },
+  'schedule': { channelId: '@eduhub2025', messageId: 5 },
+  // Add more dynamic mappings as required
+};
+
 // Forwarding function
 const forwardMessage = () => async (ctx: Context) => {
   debug('Triggered "forwardMessage" command');
@@ -18,38 +25,27 @@ const forwardMessage = () => async (ctx: Context) => {
   const messageId = ctx.message?.message_id;
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
-  if (messageId) {
+  if (messageId && userMessage) {
     try {
-      if (userMessage) {
-        if (userMessage.includes('syllabus')) {
-          // Channel and message ID for the syllabus
-          const channelId = '@eduhub2025';
-          const messageIdToForward = 3; // Message ID to forward
+      // Iterate over all keyword mappings to find matches
+      for (const keyword in keywordMappings) {
+        if (userMessage.includes(keyword)) {
+          const { channelId, messageId: messageToForward } = keywordMappings[keyword];
 
-          debug('Forwarding syllabus message to user...');
-          await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
-          debug('Syllabus forwarded successfully.');
-        }
-        // You can add more conditions here for other keywords
-        else if (userMessage.includes('schedule')) {
-          const channelId = '@eduhub2025';
-          const messageIdToForward = 5; // Message ID for schedule
-
-          debug('Forwarding schedule message to user...');
-          await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
-          debug('Schedule forwarded successfully.');
-        }
-        // If the message doesn't contain any known keyword, do nothing (silence)
-        else {
-          debug('No relevant keyword found in the message.');
+          debug(`Forwarding message with keyword "${keyword}"...`);
+          await ctx.telegram.forwardMessage(chatId, channelId, messageToForward);
+          debug(`Message forwarded successfully for "${keyword}".`);
+          return; // Exit once a match is found and message is forwarded
         }
       }
+
+      debug('No relevant keyword found in the message.');
     } catch (error) {
       debug('Error while forwarding message:', error);
       // Log or handle error as needed
     }
   } else {
-    debug('No message ID found.');
+    debug('No valid message or message content found.');
   }
 };
 
