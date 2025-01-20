@@ -1,5 +1,6 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
+import { Markup } from 'telegraf';  // Importing Markup for creating buttons
 
 const debug = createDebug('bot:greeting_text');
 
@@ -17,16 +18,17 @@ const greeting = () => async (ctx: Context) => {
     if (userMessage) {
       // Process text messages only
       if (userMessage === '/start') {
-        // Replacing the menu with alternative phrasing
-        await ctx.reply(`
-Hey ${userName}, how may I assist you today? Choose an option below:
-
-- **Previous Year's Questions** (PyQs)
-- **Study Materials** for various subjects
-- **Commands** to learn more about available options
-- **About** this bot and its features
-- **Help** if you need assistance or have questions
-        `);
+        // Sending a menu with buttons
+        await ctx.reply(
+          `Hey ${userName}, how may I assist you today? Choose an option below:`, 
+          Markup.inlineKeyboard([
+            Markup.button.callback('Previous Year\'s Questions (PyQs)', 'pyqs'),
+            Markup.button.callback('Study Materials', 'study_material'),
+            Markup.button.callback('Commands', 'commands'),
+            Markup.button.callback('About', 'about'),
+            Markup.button.callback('Help', 'help')
+          ]).extra()
+        );
       } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
         await ctx.reply(`Hey ${userName}, how may I help you?`);
       } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
