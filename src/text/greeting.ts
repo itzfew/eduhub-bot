@@ -1,65 +1,71 @@
-import { Telegraf, Context } from 'telegraf';
-import dotenv from 'dotenv';
+import { Context } from 'telegraf';
+import createDebug from 'debug';
 
-dotenv.config();
+const debug = createDebug('bot:greeting_text');
 
-// Initialize the bot with your token
-const bot = new Telegraf(process.env.BOT_TOKEN as string);
+// Main greeting function
+const greeting = () => async (ctx: Context) => {
+  debug('Triggered "greeting" text command');
 
-// Function to get recent messages from the channel
-async function fetchChannelMessages() {
-  try {
-    // Fetch the last 10 messages from the channel (you can adjust the limit)
-    const messages = await bot.telegram.getChatHistory('@eduhub2025', {
-      limit: 10, // Number of messages to fetch, you can increase if necessary
-    });
+  const messageId = ctx.message?.message_id;
+  const userName = `${ctx.message?.from.first_name}`;
 
-    return messages;
-  } catch (error) {
-    console.error('Error fetching channel messages:', error);
-    return [];
-  }
-}
+  // Get the message text or handle non-text messages
+  const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
-// Function to handle incoming messages from the user
-async function handleMessage(ctx: Context) {
-  try {
-    const userMessage = ctx.message?.text?.toLowerCase();
+  if (messageId) {
+    if (userMessage) {
+      // Process text messages only
+      if (userMessage === '/start') {
+        await ctx.reply(`Hey ${userName}, how may I help you?`);
+      } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
+        await ctx.reply(`Hey ${userName}, how may I help you?`);
+      } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
+        await ctx.reply(`Goodbye ${userName}, take care!`);
+      } else if (userMessage.includes('thank') || userMessage.includes('thanks')) {
+        await ctx.reply(`You're welcome, ${userName}! Let me know if you need further assistance.`);
+      } else if (userMessage.includes('how are you') || userMessage.includes('how are you doing')) {
+        await ctx.reply(`I'm doing great, ${userName}! How can I assist you today?`);
+      } else if (userMessage.includes('date')) {
+        const currentDate = new Date().toLocaleDateString();
+        await ctx.reply(`Today's date is: ${currentDate}`);
+      } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
+        await ctx.reply(`Eduhub Available Commands:
 
-    // If no message or invalid input, exit the function
-    if (!userMessage) return;
-
-    // Fetch recent messages from the channel
-    const messages = await fetchChannelMessages();
-
-    // Check if the user's message contains specific keywords
-    if (userMessage.includes('syllabus') || userMessage.includes('greeting')) {
-      // Search for a matching message in the channel messages
-      const matchingMessage = messages.find(msg =>
-        msg.text && msg.text.toLowerCase().includes(userMessage)
-      );
-
-      // If a matching message is found, forward it to the user
-      if (matchingMessage) {
-        await ctx.reply(`Found a message: ${matchingMessage.text}`);
-      } else {
-        await ctx.reply('No matching message found in the channel.');
+1. /help - Get information about bot commands
+2. /about - Learn more about this bot
+3. /groups - Get a list of study groups
+4. /neet - Access resources for NEET
+5. /jee - Access resources for JEE
+6. /study - Get study materials for various subjects
+7. /pyq - View previous year's questions
+8. /cal - calculator
+9. /exam - Access exam resources`);
+      } else if (userMessage.includes('syllabus')) {
+        // Forward the message with the keyword 'syllabus' from the channel
+        const channelId = '@eduhub2025'; // Replace with your channel ID
+        const keyword = 'syllabus'; // The keyword you're searching for
+        try {
+          const messages = await ctx.telegram.getChatHistory(channelId, { limit: 100 }); // Get the last 100 messages from the channel
+          const relevantMessage = messages.find((msg: any) => msg.text && msg.text.toLowerCase().includes(keyword));
+          
+          if (relevantMessage) {
+            await ctx.telegram.forwardMessage(ctx.chat.id, channelId, relevantMessage.message_id);
+            await ctx.reply(`Here is the syllabus information from the Eduhub channel:`);
+          } else {
+            await ctx.reply(`Sorry ${userName}, I couldn't find any syllabus-related messages.`);
+          }
+        } catch (error) {
+          console.error('Error fetching messages from channel:', error);
+          await ctx.reply(`Sorry ${userName}, I couldn't retrieve the syllabus message at this moment.`);
+        }
       }
+      // Removed the "I don't understand" response
     } else {
-      // If no keywords are matched, send a generic reply
-      await ctx.reply(`You said: ${userMessage}`);
+      // Handle non-text messages (e.g., media)
+      await ctx.reply(`I can only respond to text messages. Please send a text command.`);
     }
-  } catch (error) {
-    console.error('Error processing message:', error);
-    await ctx.reply('Sorry, there was an issue processing your request.');
   }
-}
+};
 
-// Set up the bot to listen for incoming messages
-bot.on('text', handleMessage);
-
-// Start the bot
-bot.launch().catch((error) => {
-  console.error('Error launching bot:', error);
-});
-
+export { greeting };
