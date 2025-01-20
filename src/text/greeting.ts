@@ -1,9 +1,5 @@
 import { Context } from 'telegraf';
 import createDebug from 'debug';
-import { study } from '../commands/study';
-import { about } from '../commands/about';
-import { help } from '../commands/help';
-import { list } from '../commands/list';
 
 const debug = createDebug('bot:greeting_text');
 
@@ -21,34 +17,7 @@ const greeting = () => async (ctx: Context) => {
     if (userMessage) {
       // Process text messages only
       if (userMessage === '/start') {
-        // Main menu options
-        await ctx.reply(`
-Hey ${userName}, how may I assist you today? Choose an option below:
-
-- Previous Year's Questions (PyQs)
-- Study Materials for various subjects
-- Commands to learn more about available options
-- About this bot and its features
-- Help if you need assistance or have questions
-        `);
-      } else if (userMessage.includes('previous year\'s questions') || userMessage.includes('pyqs')) {
-        await ctx.reply(`You selected **Previous Year's Questions (PyQs)**. Please select the following command:
-
-- /pyq 
-OR
-- /exam for NEET and JEE PyQs`);
-      } else if (userMessage.includes('study materials')) {
-        // Dispatch the study command from the src/commands/study.ts
-        study(ctx);
-      } else if (userMessage.includes('commands') || userMessage.includes('list')) {
-        // Dispatch the list of available commands from src/commands/list.ts
-        list(ctx);
-      } else if (userMessage.includes('about')) {
-        // Dispatch the about command from src/commands/about.ts
-        about(ctx);
-      } else if (userMessage.includes('help')) {
-        // Dispatch the help command from src/commands/help.ts
-        help(ctx);
+        await ctx.reply(`Hey ${userName}, how may I help you?`);
       } else if (userMessage.includes('hi') || userMessage.includes('hello') || userMessage.includes('hey') || userMessage.includes('hlo')) {
         await ctx.reply(`Hey ${userName}, how may I help you?`);
       } else if (userMessage.includes('bye') || userMessage.includes('goodbye') || userMessage.includes('exit')) {
@@ -63,16 +32,17 @@ OR
       } else if (userMessage.includes('/list') || userMessage.includes('/command') || userMessage.includes('/commands')) {
         await ctx.reply(`Eduhub Available Commands:
 
-- /help - Get information about bot commands
-- /about - Learn more about this bot
-- /groups - Get a list of study groups
-- /neet - Access resources for NEET
-- /jee - Access resources for JEE
-- /study - Get study materials for various subjects
-- /pyq - View previous year's questions
-- /cal - Calculator
-- /exam - Access exam resources`);
+1. /help - Get information about bot commands
+2. /about - Learn more about this bot
+3. /groups - Get a list of study groups
+4. /neet - Access resources for NEET
+5. /jee - Access resources for JEE
+6. /study - Get study materials for various subjects
+7. /pyq - View previous year's questions
+8. /cal - calculator
+9. /exam - Access exam resources`);
       }
+      // Removed the "I don't understand" response
     } else {
       // Handle non-text messages (e.g., media)
       await ctx.reply(`I can only respond to text messages. Please send a text command.`);
