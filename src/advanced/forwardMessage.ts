@@ -19,13 +19,13 @@ const forwardMessage = () => async (ctx: Context) => {
   const userMessage = ctx.message && 'text' in ctx.message ? ctx.message.text.toLowerCase() : null;
 
   if (messageId && userMessage) {
-    // Mapping of resource names to message IDs
+    // Mapping of resource names to message IDs in the order 1, 2, 3, 4, etc.
     const resourceMap: { [key: string]: number } = {
-      'med easy physics': 5,       // Med Easy Physics
-      'akash test series 2024': 1, // Akash Test Series 2024
-      'akash modules 2024': 2,     // Akash Modules 2024
-      'allen modules': 3,          // Allen Modules
-      'allen test 2024': 4,        // Allen Test 2024
+      'med easy physics': 1,       // Med Easy Physics
+      'akash test series 2024': 2, // Akash Test Series 2024
+      'akash modules 2024': 3,     // Akash Modules 2024
+      'allen modules': 4,          // Allen Modules
+      'allen test 2024': 5,        // Allen Test 2024
       'botany med easy': 6,        // Botany Med Easy
       'zoology med easy': 7,       // Zoology Med Easy
       'chemistry know your ncert': 8, // Chemistry - Know Your NCERT
@@ -46,7 +46,7 @@ const forwardMessage = () => async (ctx: Context) => {
       const messageIdToForward = resourceMap[resourceMatch];
       const channelId = '@eduhub2025'; // Channel ID
 
-      // Forward the message corresponding to the resource
+      // Forward the message corresponding to the resource (in the order 1, 2, 3, etc.)
       await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
     }
   }
