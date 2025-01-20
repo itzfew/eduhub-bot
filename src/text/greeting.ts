@@ -25,11 +25,13 @@ const greeting = () => async (ctx: Context) => {
       if (userMessage === '/start') {
         await ctx.reply(`Hey ${userName}, how may I help you?`);
       } else if (userMessage.includes('syllabus')) {
-        // Replace with predefined message ID or saved message
-        const channelId = '@eduhub2025'; 
-        const messageIdToForward = 123456789; // Replace with actual message ID that you want to forward
+        // Channel and message ID for the syllabus
+        const channelId = '@eduhub2025';
+        const messageIdToForward = 3; // Message ID to forward
+
+        // Forward the syllabus message to the user
         await ctx.telegram.forwardMessage(chatId, channelId, messageIdToForward);
-        await ctx.reply(`Here is the syllabus information from the Eduhub channel:`);
+        await ctx.reply(`Here is the syllabus information from the Eduhub channel.`);
       }
     } else {
       await ctx.reply(`I can only respond to text messages. Please send a text command.`);
