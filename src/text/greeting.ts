@@ -1,4 +1,4 @@
-i.mport { Context } from 'telegraf';
+import { Context } from 'telegraf';
 import createDebug from 'debug';
 import { study } from '../commands/study';
 import { about } from '../commands/about';
