@@ -1,4 +1,16 @@
 {
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "outputDirectory": "public"
+      }
+    }
+  ]
+}
+
+{
   "version": 2,
   "public": true,
   "rewrites": [
