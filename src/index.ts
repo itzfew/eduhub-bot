@@ -8,7 +8,7 @@ import { jee } from './commands/jee';
 import { quizes } from './commands/quizes';
 import { groups } from './commands/groups';
 import { list } from './commands/list';
-import { pdf } from './pdf';
+import { question } from './question';
 import { greeting } from './text';
 import { pyq } from './text'; // Importing pyq.ts
 import { calculator } from './text'; // Importing calculator.ts
@@ -34,7 +34,7 @@ bot.command('jee', jee());
 bot.command('quizes', quizes());
 bot.command('groups', groups());
 bot.command('list', list());
-bot.command('pdf', pdf());
+bot.command('question', question());
 // Register the poll command
 bot.command('poll', poll());
 
