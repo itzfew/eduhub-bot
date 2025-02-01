@@ -1,23 +1,23 @@
 {
+  "version": 2,
   "builds": [
     {
       "src": "src/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "outputDirectory": "public"
-      }
+      "use": "@vercel/node"
     }
-  ]
-}
-
-{
-  "version": 2,
+  ],
   "public": true,
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "api/index.ts"
+      "destination": "/api/index.ts"
     }
   ],
-  "redirects": [{ "source": "/", "destination": "/api", "permanent": false }]
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/api",
+      "permanent": false
+    }
+  ]
 }
