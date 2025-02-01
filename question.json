@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "question": "What is the powerhouse of the cell?",
+    "options": ["Nucleus", "Mitochondria", "Ribosome", "Golgi Apparatus"],
+    "answer": "Mitochondria"
+  },
+  {
+    "id": 2,
+    "question": "What is the chemical formula of water?",
+    "options": ["H2O", "O2", "CO2", "H2O2"],
+    "answer": "H2O"
+  }
+]
