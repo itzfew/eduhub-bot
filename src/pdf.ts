@@ -1,4 +1,4 @@
-import { Context } from 'telegraf';
+ import { Context } from 'telegraf';
 import createDebug from 'debug';
 import PDFDocument from 'pdfkit';
 import { Readable } from 'stream';
