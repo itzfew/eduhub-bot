@@ -1,6 +1,4 @@
 import { Context } from 'telegraf';
-import fs from 'fs';
-import path from 'path';
 
 interface Question {
   id: number;
@@ -9,18 +7,19 @@ interface Question {
   answer: string;
 }
 
-const getQuestion = (): Question | null => {
-  try {
-    const filePath = path.join(__dirname, '../question.json'); // Adjust path if needed
-    console.log('Reading from:', filePath);
+const GITHUB_QUESTION_URL =
+  'https://raw.githubusercontent.com/itzfew/eduhub-bot/master/src/question.json'; // Corrected URL
 
-    if (!fs.existsSync(filePath)) {
-      console.error('⚠️ question.json file not found!');
+const getQuestion = async (): Promise<Question | null> => {
+  try {
+    const response = await fetch(GITHUB_QUESTION_URL);
+    
+    if (!response.ok) {
+      console.error('⚠️ Failed to fetch question.json from GitHub');
       return null;
     }
 
-    const data = fs.readFileSync(filePath, 'utf8');
-    const questions: Question[] = JSON.parse(data);
+    const questions: Question[] = await response.json();
 
     if (questions.length === 0) {
       console.error('⚠️ No questions found in question.json!');
@@ -28,22 +27,21 @@ const getQuestion = (): Question | null => {
     }
 
     // Pick a random question
-    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-    console.log('📖 Selected Question:', randomQuestion.question);
-
-    return randomQuestion;
+    return questions[Math.floor(Math.random() * questions.length)];
   } catch (error) {
-    console.error('❌ Error reading questions:', error);
+    console.error('❌ Error fetching questions:', error);
     return null;
   }
 };
 
 const question = () => async (ctx: Context) => {
   console.log('📩 Received /question command');
-  const q = getQuestion();
+  const q = await getQuestion();
 
   if (q) {
-    const message = `📖 *Question:*\n${q.question}\n\n🔹 Options:\n${q.options.map((opt, i) => `${i + 1}. ${opt}`).join('\n')}`;
+    const message = `📖 *Question:*\n${q.question}\n\n🔹 Options:\n${q.options
+      .map((opt, i) => `${i + 1}. ${opt}`)
+      .join('\n')}`;
     await ctx.replyWithMarkdown(message);
   } else {
     await ctx.reply('❌ Error fetching question. Please try again.');
